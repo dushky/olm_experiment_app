@@ -1,5 +1,5 @@
-query test($id: ID) {
-  user(id:$id) {
-    name
+mutation login($login:LoginInput) {
+  login(input: $login) {
+    token
   }
 }

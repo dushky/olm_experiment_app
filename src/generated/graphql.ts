@@ -18,14 +18,104 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AccessToken = {
+  __typename?: 'AccessToken';
+  token: Scalars['String'];
+};
+
+export type EmailVerificationResponse = {
+  __typename?: 'EmailVerificationResponse';
+  status: EmailVerificationStatus;
+};
+
+export enum EmailVerificationStatus {
+  /** VERIFIED */
+  Verified = 'VERIFIED'
+}
+
+export type ForgotPasswordInput = {
+  email: Scalars['String'];
+  reset_password_url?: Maybe<ResetPasswordUrlInput>;
+};
+
+export type ForgotPasswordResponse = {
+  __typename?: 'ForgotPasswordResponse';
+  message?: Maybe<Scalars['String']>;
+  status: ForgotPasswordStatus;
+};
+
+export enum ForgotPasswordStatus {
+  /** EMAIL_SENT */
+  EmailSent = 'EMAIL_SENT'
+}
+
+export type LoginInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type LogoutResponse = {
+  __typename?: 'LogoutResponse';
+  message: Scalars['String'];
+  status: LogoutStatus;
+};
+
+export enum LogoutStatus {
+  /** TOKEN_REVOKED */
+  TokenRevoked = 'TOKEN_REVOKED'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
+  forgotPassword: ForgotPasswordResponse;
+  login: AccessToken;
+  logout: LogoutResponse;
+  register: RegisterResponse;
+  resendEmailVerification: ResendEmailVerificationResponse;
+  resetPassword: ResetPasswordResponse;
+  updatePassword: UpdatePasswordResponse;
   updateUser?: Maybe<User>;
+  verifyEmail: EmailVerificationResponse;
+};
+
+
+export type MutationForgotPasswordArgs = {
+  input: ForgotPasswordInput;
+};
+
+
+export type MutationLoginArgs = {
+  input?: Maybe<LoginInput>;
+};
+
+
+export type MutationRegisterArgs = {
+  input?: Maybe<RegisterInput>;
+};
+
+
+export type MutationResendEmailVerificationArgs = {
+  input: ResendEmailVerificationInput;
+};
+
+
+export type MutationResetPasswordArgs = {
+  input: ResetPasswordInput;
+};
+
+
+export type MutationUpdatePasswordArgs = {
+  input: UpdatePasswordInput;
 };
 
 
 export type MutationUpdateUserArgs = {
   inputUpdate?: Maybe<UpdateUser>;
+};
+
+
+export type MutationVerifyEmailArgs = {
+  input: VerifyEmailInput;
 };
 
 /** Allows ordering a list of records. */
@@ -95,6 +185,68 @@ export type QueryUsersArgs = {
   page?: Maybe<Scalars['Int']>;
 };
 
+export type RegisterInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  password: Scalars['String'];
+  password_confirmation: Scalars['String'];
+};
+
+export type RegisterResponse = {
+  __typename?: 'RegisterResponse';
+  status: RegisterStatus;
+  token?: Maybe<Scalars['String']>;
+};
+
+export enum RegisterStatus {
+  /** MUST_VERIFY_EMAIL */
+  MustVerifyEmail = 'MUST_VERIFY_EMAIL',
+  /** SUCCESS */
+  Success = 'SUCCESS'
+}
+
+export type ResendEmailVerificationInput = {
+  email: Scalars['String'];
+};
+
+export type ResendEmailVerificationResponse = {
+  __typename?: 'ResendEmailVerificationResponse';
+  status: ResendEmailVerificationStatus;
+};
+
+export enum ResendEmailVerificationStatus {
+  /** EMAIL_SENT */
+  EmailSent = 'EMAIL_SENT'
+}
+
+export type ResetPasswordInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  password_confirmation: Scalars['String'];
+  token: Scalars['String'];
+};
+
+export type ResetPasswordResponse = {
+  __typename?: 'ResetPasswordResponse';
+  message?: Maybe<Scalars['String']>;
+  status: ResetPasswordStatus;
+};
+
+export enum ResetPasswordStatus {
+  /** PASSWORD_RESET */
+  PasswordReset = 'PASSWORD_RESET'
+}
+
+/**
+ * The url used to reset the password.
+ * Use the `__EMAIL__` and `__TOKEN__` placeholders to inject the reset password email and token.
+ *
+ * e.g; `https://my-front-end.com?reset-password?email=__EMAIL__&token=__TOKEN__`
+ */
+export type ResetPasswordUrlInput = {
+  url: Scalars['String'];
+};
+
 /** Information about pagination using a simple paginator. */
 export type SimplePaginatorInfo = {
   __typename?: 'SimplePaginatorInfo';
@@ -128,6 +280,22 @@ export enum Trashed {
   Without = 'WITHOUT'
 }
 
+export type UpdatePasswordInput = {
+  current_password: Scalars['String'];
+  password: Scalars['String'];
+  password_confirmation: Scalars['String'];
+};
+
+export type UpdatePasswordResponse = {
+  __typename?: 'UpdatePasswordResponse';
+  status: UpdatePasswordStatus;
+};
+
+export enum UpdatePasswordStatus {
+  /** PASSWORD_UPDATED */
+  PasswordUpdated = 'PASSWORD_UPDATED'
+}
+
 export type UpdateUser = {
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -151,46 +319,66 @@ export type UserPaginator = {
   paginatorInfo: PaginatorInfo;
 };
 
-export type TestQueryVariables = Exact<{
-  id?: Maybe<Scalars['ID']>;
+/**
+ * The url used to verify the email address.
+ * Use __ID__ and __HASH__ to inject values.
+ *
+ * e.g; `https://my-front-end.com/verify-email?id=__ID__&hash=__HASH__`
+ *
+ * If the API uses signed email verification urls
+ * you must also use __EXPIRES__ and __SIGNATURE__
+ *
+ * e.g; `https://my-front-end.com/verify-email?id=__ID__&hash=__HASH__&expires=__EXPIRES__&signature=__SIGNATURE__`
+ */
+export type VerificationUrlInput = {
+  url: Scalars['String'];
+};
+
+export type VerifyEmailInput = {
+  expires?: Maybe<Scalars['Int']>;
+  hash: Scalars['String'];
+  id: Scalars['ID'];
+  signature?: Maybe<Scalars['String']>;
+};
+
+export type LoginMutationVariables = Exact<{
+  login?: Maybe<LoginInput>;
 }>;
 
 
-export type TestQuery = { __typename?: 'Query', user?: { __typename?: 'User', name: string } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AccessToken', token: string } };
 
 
-export const TestDocument = gql`
-    query test($id: ID) {
-  user(id: $id) {
-    name
+export const LoginDocument = gql`
+    mutation login($login: LoginInput) {
+  login(input: $login) {
+    token
   }
 }
     `;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
- * __useTestQuery__
+ * __useLoginMutation__
  *
- * To run a query within a React component, call `useTestQuery` and pass it any options that fit your needs.
- * When your component renders, `useTestQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useTestQuery({
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      login: // value for 'login'
  *   },
  * });
  */
-export function useTestQuery(baseOptions?: Apollo.QueryHookOptions<TestQuery, TestQueryVariables>) {
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TestQuery, TestQueryVariables>(TestDocument, options);
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
       }
-export function useTestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TestQuery, TestQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TestQuery, TestQueryVariables>(TestDocument, options);
-        }
-export type TestQueryHookResult = ReturnType<typeof useTestQuery>;
-export type TestLazyQueryHookResult = ReturnType<typeof useTestLazyQuery>;
-export type TestQueryResult = Apollo.QueryResult<TestQuery, TestQueryVariables>;
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
