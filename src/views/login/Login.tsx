@@ -1,5 +1,4 @@
 import React, { FormEvent, useState } from 'react'
-
 //material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -9,7 +8,7 @@ import {
 } from '@mui/material';
 
 // graphql
-import { LoginInput, useLoginMutation } from '../../generated/graphql'
+import { LoginInput, useLoginMutation, useGetMeQuery } from '../../generated/graphql'
 import { FetchResult } from '@apollo/client';
 
 // components
@@ -17,16 +16,18 @@ import AuthWrapper1 from '../../ui-components/wrappers/AuthWrapper'
 import AuthCardWrapper from '../../ui-components/wrappers/AuthCardWrapper'
 import LoginNoAccount from './LoginNoAccount'
 import LoginForm from './LoginForm'
+import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 
 const Login = () => {
-    // const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-    
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)    
     const [user, setUser] = useState<LoginInput>({
         email: '',
         password: ''
     })
+
+    const navigator = useNavigate()
     
     const [loginMutation, { data, loading, error }] = useLoginMutation({
         variables: {
@@ -36,14 +37,20 @@ const Login = () => {
 
 
 
-    const handleSubmitForm = (values: LoginInput) => {
+
+    const handleSubmitForm = async (values: LoginInput) => {
         setIsSubmitting(true)
         setUser(values)
-        loginMutation().then((value: FetchResult) => {
-            console.log("SUCCESS: ", value);
-            
-        }).catch((e: any) => {
-            setIsSubmitting(false)
+        axios.defaults.withCredentials = true
+        axios.get("http://olm_experiment_api.test/sanctum/csrf-cookie").then((response: any) => {
+            loginMutation().then((value: FetchResult) => {
+                localStorage.setItem('token', value?.data?.login?.token)
+                navigator("/app/dashboard")
+            }).catch((e: any) => {
+                setIsSubmitting(false)
+                console.log(e);
+                
+            })
         })
     }
 

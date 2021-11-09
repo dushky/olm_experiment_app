@@ -49,7 +49,7 @@ const LoginForm = ({user, handleSubmitForm, isSubmitting}: Props) => {
             onSubmit={(values: LoginInput) => handleSubmitForm(values)}
         >
             {({ errors, handleBlur, handleChange, handleSubmit, touched, values }: any) => (
-                <form noValidate onSubmit={handleSubmit}>
+                <form noValidate onSubmit={handleSubmit} >
                     <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
                         <InputLabel htmlFor="outlined-adornment-email-login">Email Address</InputLabel>
                         <OutlinedInput

@@ -6,15 +6,35 @@ import reportWebVitals from './reportWebVitals';
 import {
   ApolloClient,
   InMemoryCache,
-  ApolloProvider
+  ApolloProvider,
+  ApolloLink,
+  HttpLink
 } from "@apollo/client"
+import { setContext } from '@apollo/client/link/context'
 import { BrowserRouter } from 'react-router-dom'
+
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+      authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  }
+})
+  // uri: 'http://olm_experiment_api.test/graphql',
 
 
 const client = new ApolloClient({
-  uri: 'http://192.168.137.1:8081/graphql',
+  link: ApolloLink.from([
+    authLink,
+    new HttpLink({
+      uri: 'http://olm_experiment_api.test/graphql',
+      credentials: 'include',
+    })
+  ]),
   cache: new InMemoryCache()
 });
+
 
 
 ReactDOM.render(

@@ -18,7 +18,7 @@ const NavGroup = ({ item }: any) => {
         switch (menu.type) {
             case 'collapse':
                 return <NavCollapse key={menu.id} menu={menu} level={1} />;
-            case 'item':
+            case 'item':                
                 return <NavItem key={menu.id} item={menu} level={1} />;
             default:
                 return (

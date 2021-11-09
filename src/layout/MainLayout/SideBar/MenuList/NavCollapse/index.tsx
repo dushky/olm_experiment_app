@@ -16,8 +16,7 @@ import { IconChevronDown, IconChevronUp } from '@tabler/icons';
 // ==============================|| SIDEBAR MENU LIST COLLAPSE ITEMS ||============================== //
 
 const NavCollapse = ({ menu, level }: any) => {
-    const theme : any = useTheme();
-    // const customization = useSelector((state) => state.customization);
+    const theme: any = useTheme();
 
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState(null);
@@ -55,7 +54,6 @@ const NavCollapse = ({ menu, level }: any) => {
             fontSize={level > 0 ? 'inherit' : 'medium'}
         />
     );
-        //${customization.borderRadius}
     return (
         <>
             <ListItemButton
