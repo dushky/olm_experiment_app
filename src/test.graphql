@@ -11,6 +11,12 @@ mutation logout {
   }
 }
 
+mutation runScript($input: String) {
+  RunScript(inputScript: $input) {
+    output
+  }
+}
+
 query getMe {
   me {
     id,
@@ -26,3 +32,4 @@ query getUser($id: ID!) {
     email
   }
 }
+

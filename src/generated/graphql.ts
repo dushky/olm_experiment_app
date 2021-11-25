@@ -67,6 +67,7 @@ export enum LogoutStatus {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  RunScript?: Maybe<OutputScript>;
   forgotPassword: ForgotPasswordResponse;
   login: AccessToken;
   logout: LogoutResponse;
@@ -76,6 +77,11 @@ export type Mutation = {
   updatePassword: UpdatePasswordResponse;
   updateUser?: Maybe<User>;
   verifyEmail: EmailVerificationResponse;
+};
+
+
+export type MutationRunScriptArgs = {
+  inputScript?: Maybe<Scalars['String']>;
 };
 
 
@@ -124,6 +130,11 @@ export type OrderByClause = {
   column: Scalars['String'];
   /** The direction that is used for ordering. */
   order: SortOrder;
+};
+
+export type OutputScript = {
+  __typename?: 'OutputScript';
+  output?: Maybe<Scalars['String']>;
 };
 
 /** Information about pagination using a Relay style cursor connection. */
@@ -248,6 +259,11 @@ export type ResetPasswordUrlInput = {
   url: Scalars['String'];
 };
 
+export type RunScriptType = {
+  __typename?: 'RunScriptType';
+  command?: Maybe<Scalars['String']>;
+};
+
 /** Information about pagination using a simple paginator. */
 export type SimplePaginatorInfo = {
   __typename?: 'SimplePaginatorInfo';
@@ -354,6 +370,13 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutResponse', status: LogoutStatus, message: string } };
 
+export type RunScriptMutationVariables = Exact<{
+  input?: Maybe<Scalars['String']>;
+}>;
+
+
+export type RunScriptMutation = { __typename?: 'Mutation', RunScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
+
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -433,6 +456,39 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const RunScriptDocument = gql`
+    mutation runScript($input: String) {
+  RunScript(inputScript: $input) {
+    output
+  }
+}
+    `;
+export type RunScriptMutationFn = Apollo.MutationFunction<RunScriptMutation, RunScriptMutationVariables>;
+
+/**
+ * __useRunScriptMutation__
+ *
+ * To run a mutation, you first call `useRunScriptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRunScriptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [runScriptMutation, { data, loading, error }] = useRunScriptMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRunScriptMutation(baseOptions?: Apollo.MutationHookOptions<RunScriptMutation, RunScriptMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RunScriptMutation, RunScriptMutationVariables>(RunScriptDocument, options);
+      }
+export type RunScriptMutationHookResult = ReturnType<typeof useRunScriptMutation>;
+export type RunScriptMutationResult = Apollo.MutationResult<RunScriptMutation>;
+export type RunScriptMutationOptions = Apollo.BaseMutationOptions<RunScriptMutation, RunScriptMutationVariables>;
 export const GetMeDocument = gql`
     query getMe {
   me {

@@ -5,6 +5,7 @@ import MainLayout from './layout/MainLayout'
 import Login from './views/login/Login'
 import { Outlet } from 'react-router-dom'
 import Page404 from './views/pages/Page404'
+import Dashboard from './views/dashboard'
 
 
 const routes: RouteObject[] = [
@@ -14,7 +15,7 @@ const routes: RouteObject[] = [
     children: 
     [
       { path: 'test', element: <Test/> },
-      { path: 'dashboard', element: <Test/> },
+      { path: 'dashboard', element: <Dashboard/> },
       { path: "*", element: <Navigate to="/404"/>}
     ]
   },

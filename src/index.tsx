@@ -12,6 +12,21 @@ import {
 } from "@apollo/client"
 import { setContext } from '@apollo/client/link/context'
 import { BrowserRouter } from 'react-router-dom'
+import Echo from 'laravel-echo'
+//@ts-ignore
+window.Pusher = require('pusher-js')
+console.log(process.env.REACT_APP_PUSHER_ENV_KEY);
+
+//@ts-ignore
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: process.env.REACT_APP_PUSHER_ENV_KEY,
+  cluster: process.env.REACT_APP_PUSHER_ENV_CLUSTER,
+  wsHost: process.env.REACT_APP_PUSHER_HOST,
+  wsPort: 6001,
+  forceTLS: false,
+  disableStats: true
+})
 
 const authLink = setContext((_, { headers }) => {
   return {
@@ -21,8 +36,6 @@ const authLink = setContext((_, { headers }) => {
     },
   }
 })
-  // uri: 'http://olm_experiment_api.test/graphql',
-
 
 const client = new ApolloClient({
   link: ApolloLink.from([
