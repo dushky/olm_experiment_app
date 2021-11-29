@@ -3,13 +3,22 @@ import React, { useState, useEffect } from 'react'
 // MUI
 import { Grid } from '@mui/material'
 
+
 // constants
 import { gridSpacing } from '../../assets/constants'
 import DashboardChart from './DashboardChart'
-
+import { useRunScriptMutation } from '../../generated/graphql'
+import ExperimentForm from './ExperimentForm'
 
 const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
+    const [buttonLoading, setButtonLoading] = useState(false);
+
+    const [mutation, { data, loading, error }] = useRunScriptMutation({
+        variables: {
+            'input': "test"
+        }
+    });
     const series: {
         name: string,
         data: []
@@ -21,6 +30,12 @@ const Dashboard = () => {
     useEffect(() => {
         setLoading(false);        
     }, []);
+
+    const handleSubmit = async () => {
+        setButtonLoading(true)
+        await mutation()
+        setButtonLoading(false)
+    }
 
     const chartData = {
         height: 480,
@@ -94,8 +109,12 @@ const Dashboard = () => {
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
                 <Grid container spacing={gridSpacing}>
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={6} md={6}>
                         <DashboardChart chartData={chartData} isLoading={isLoading} />
+                    </Grid>
+                    <Grid item xs={6} md={6}>
+                        <ExperimentForm handleFormSubmit={handleSubmit} loading={buttonLoading}/>
+                        {/* TODO: Component which render form */}
                     </Grid>
                 </Grid>
             </Grid>

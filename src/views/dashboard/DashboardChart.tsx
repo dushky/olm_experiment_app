@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Grid, TextField, Typography, MenuItem } from '@mui/material'
+import { Grid } from '@mui/material'
 
 import { gridSpacing } from '../../assets/constants'
 import MainCard from '../../ui-components/cards/MainCard'
@@ -19,7 +19,6 @@ const DashboardChart = ({chartData, isLoading}: Props) => {
             ...chartData.options
         };
         
-        // do not load chart when loading
         if (!isLoading) {
             ApexCharts.exec(`line-chart`, 'updateOptions', newChartData);  
         }
@@ -42,34 +41,6 @@ const DashboardChart = ({chartData, isLoading}: Props) => {
     return (
         <MainCard>
             <Grid container spacing={gridSpacing}>
-                <Grid item xs={12}>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                        <Grid item>
-                            <Grid container direction="column" spacing={1}>
-                                <Grid item>
-                                    <Typography variant="subtitle2">Total Growth</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h3">$2,324.00</Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        {/* <Grid item>
-                            <TextField
-                                id="standard-select-currency"
-                                select
-                                value={value}
-                                onChange={(e) => setValue(e.target.value)}
-                            >
-                                {status.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid> */}
-                    </Grid>
-                </Grid>
                 <Grid item xs={12}>
                     <Chart {...updatedData} />
                 </Grid>

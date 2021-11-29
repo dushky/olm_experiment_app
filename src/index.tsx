@@ -41,7 +41,7 @@ const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     new HttpLink({
-      uri: 'http://olm_experiment_api.test/graphql',
+      uri: 'http://olm-api.test/graphql',
       credentials: 'include',
     })
   ]),

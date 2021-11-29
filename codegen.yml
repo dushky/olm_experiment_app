@@ -1,5 +1,5 @@
 overwrite: true
-schema: "http://olm_experiment_api.test/graphql"
+schema: "http://olm-api.test/graphql"
 documents: "src/**/*.graphql"
 generates:
   src/generated/graphql.ts:

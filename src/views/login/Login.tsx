@@ -42,7 +42,7 @@ const Login = () => {
         setIsSubmitting(true)
         setUser(values)
         axios.defaults.withCredentials = true
-        axios.get("http://olm_experiment_api.test/sanctum/csrf-cookie").then((response: any) => {
+        axios.get("http://olm-api.test/sanctum/csrf-cookie").then((response: any) => {
             loginMutation().then((value: FetchResult) => {
                 localStorage.setItem('token', value?.data?.login?.token)
                 navigator("/app/dashboard")
