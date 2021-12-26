@@ -31,14 +31,13 @@ import {
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
-import MainCard from '../../../../ui-components/cards/MainCard';
-import Transitions from '../../../../ui-components/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
+import MainCard from 'ui-components/cards/MainCard';
+import Transitions from 'ui-components/extended/Transitions';
 // import User1 from 'assets/images/users/user-round.svg';
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
-import { useLogoutMutation } from '../../../../generated/graphql';
+import { useLogoutMutation } from 'generated/graphql';
 
 // ==============================|| PROFILE MENU ||============================== //
 

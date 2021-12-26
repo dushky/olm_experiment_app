@@ -17,11 +17,11 @@ import {
 
 
 import { Formik } from 'formik';
-import { loginSchema } from '../../assets/validation-schemas';
-import AnimateButton from '../../ui-components/extended/AnimateButton';
+import { loginSchema } from 'assets/validation-schemas';
+import AnimateButton from 'ui-components/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import { LoginInput } from '../../generated/graphql';
+import { LoginInput } from 'generated/graphql';
 
 interface Props {
     user: LoginInput,

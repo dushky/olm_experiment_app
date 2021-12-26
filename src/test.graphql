@@ -33,3 +33,112 @@ query getUser($id: ID!) {
   }
 }
 
+query getSoftware {
+  software {
+    data {
+      ...SoftwareData
+    }
+  }
+}
+
+
+query getDeviceTypes {
+  device_types {
+    data {
+      ...DeviceTypeData
+    }
+  }
+}
+
+query getDevices {
+  devices {
+    data {
+      ...DeviceData
+    }
+  }
+}
+
+query getDeviceByID($input: ID!) {
+  getDevice(id: $input) {
+    ...DeviceData
+  }
+}
+
+mutation createDevice($input: CreateDevice) {
+  createDevice(input: $input) {
+    ...DeviceData
+  }
+}
+
+mutation updateDevice($input: UpdateDevice) {
+  updateDevice(input: $input) {
+    ...DeviceData
+  }
+}
+
+mutation removeDevice($id: ID!) {
+  removeDevice(id: $id) {
+    ...DeviceData
+  }
+}
+
+mutation updateSoftware($input: UpdateSoftware) {
+  updateSoftware(input: $input) {
+    ...SoftwareData
+  }
+}
+
+mutation createSoftware($input: CreateSoftware) {
+  createSoftware(input: $input) {
+    ...SoftwareData
+  }
+}
+
+mutation createDeviceType($input: CreateDeviceType) {
+  createDeviceType(input: $input) {
+    ...DeviceTypeData
+  }
+}
+
+mutation updateDeviceType($input: UpdateDeviceType) {
+  updateDeviceType(input: $input) {
+    ...DeviceTypeData
+  }
+}
+
+mutation removeDeviceType($input: ID!) {
+  removeDeviceType(id: $input) {
+    ...DeviceTypeData
+  }
+}
+
+
+mutation removeSoftware($input: ID!) {
+  removeSoftware(id: $input) {
+    ...SoftwareData
+  }
+}
+
+
+fragment SoftwareData on Software {
+  id
+  name
+}
+
+fragment DeviceTypeData on DeviceType {
+  id
+  name
+}
+
+fragment DeviceData on Device {
+  id
+  name
+  port
+  deviceType {
+    ...DeviceTypeData
+  }
+  software {
+    ...SoftwareData
+  }
+  port
+}

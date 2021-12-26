@@ -33,9 +33,6 @@ const NavItem = ({ item, level }: any) => {
     };
 
 
-
-    console.log(item, )
-
     return (
         <ListItemButton
             disabled={item.disabled}

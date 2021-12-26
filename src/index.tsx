@@ -15,7 +15,6 @@ import { BrowserRouter } from 'react-router-dom'
 import Echo from 'laravel-echo'
 //@ts-ignore
 window.Pusher = require('pusher-js')
-console.log(process.env.REACT_APP_PUSHER_ENV_KEY);
 
 //@ts-ignore
 window.Echo = new Echo({

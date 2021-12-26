@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 
 import { Grid } from '@mui/material'
 
-import { gridSpacing } from '../../assets/constants'
-import MainCard from '../../ui-components/cards/MainCard'
+import { gridSpacing } from 'assets/constants'
+import MainCard from 'ui-components/cards/MainCard'
 import Chart from 'react-apexcharts';
-
 
 interface Props {
     chartData: any,
@@ -14,6 +13,7 @@ interface Props {
 
 const DashboardChart = ({chartData, isLoading}: Props) => {
     const [updatedData, setUpdatedData] = useState(chartData);
+    
     useEffect(() => {
         const newChartData = {
             ...chartData.options

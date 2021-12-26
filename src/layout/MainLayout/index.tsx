@@ -5,19 +5,17 @@ import { Outlet } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
 
-// project imports
-// import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 import Header from './Header';
 import Sidebar from './SideBar';
-// import Customization from '../Customization';
-// import navigation from 'menu-items';
+
 import { drawerWidth } from '../../assets/constants';
 
-// assets
-// import { IconChevronRight } from '@tabler/icons';
+interface MainProps {
+    theme: any,
+    open: boolean
+}
 
-// styles
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open } : any) => ({
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }: MainProps) => ({
     ...theme.typography.mainContent,
     ...(!open && {
         borderBottomLeftRadius: 0,
@@ -91,16 +89,11 @@ const MainLayout = () => {
                 </Toolbar>
             </AppBar>
 
-            {/* drawer */}
             <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
-            {/* main content */}
             <Main theme={theme} open={leftDrawerOpened}>
-                {/* breadcrumb */}
-                {/* <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign /> */}
                 <Outlet />
             </Main>
-            {/* <Customization /> */}
         </Box>
     );
 };

@@ -1,6 +1,5 @@
 import React, { FormEvent, useState } from 'react'
 //material-ui
-import { useTheme } from '@mui/material/styles';
 import {
     Box,
     Divider,
@@ -8,12 +7,12 @@ import {
 } from '@mui/material';
 
 // graphql
-import { LoginInput, useLoginMutation, useGetMeQuery } from '../../generated/graphql'
+import { LoginInput, useLoginMutation, useGetMeQuery } from 'generated/graphql'
 import { FetchResult } from '@apollo/client';
 
 // components
-import AuthWrapper1 from '../../ui-components/wrappers/AuthWrapper'
-import AuthCardWrapper from '../../ui-components/wrappers/AuthCardWrapper'
+import AuthWrapper1 from 'ui-components/wrappers/AuthWrapper'
+import AuthCardWrapper from 'ui-components/wrappers/AuthCardWrapper'
 import LoginNoAccount from './LoginNoAccount'
 import LoginForm from './LoginForm'
 import axios from 'axios';

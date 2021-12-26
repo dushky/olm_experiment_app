@@ -23,6 +23,67 @@ export type AccessToken = {
   token: Scalars['String'];
 };
 
+export type CreateDevice = {
+  device_type_id: Scalars['ID'];
+  name: Scalars['String'];
+  port: Scalars['String'];
+  software: Array<Scalars['ID']>;
+};
+
+export type CreateDeviceType = {
+  name: Scalars['String'];
+};
+
+export type CreateSoftware = {
+  name: Scalars['String'];
+};
+
+export type Device = {
+  __typename?: 'Device';
+  created_at: Scalars['DateTime'];
+  deviceType: DeviceType;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  port: Scalars['String'];
+  software: Array<Software>;
+  status?: Maybe<DeviceStatus>;
+  updated_at: Scalars['DateTime'];
+};
+
+/** A paginated list of Device items. */
+export type DevicePaginator = {
+  __typename?: 'DevicePaginator';
+  /** A list of Device items. */
+  data: Array<Device>;
+  /** Pagination information about the list of items. */
+  paginatorInfo: PaginatorInfo;
+};
+
+export enum DeviceStatus {
+  /** offline */
+  Offline = 'offline',
+  /** online */
+  Online = 'online'
+}
+
+export type DeviceType = {
+  __typename?: 'DeviceType';
+  created_at: Scalars['DateTime'];
+  devices: Array<Device>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+};
+
+/** A paginated list of DeviceType items. */
+export type DeviceTypePaginator = {
+  __typename?: 'DeviceTypePaginator';
+  /** A list of DeviceType items. */
+  data: Array<DeviceType>;
+  /** Pagination information about the list of items. */
+  paginatorInfo: PaginatorInfo;
+};
+
 export type EmailVerificationResponse = {
   __typename?: 'EmailVerificationResponse';
   status: EmailVerificationStatus;
@@ -68,13 +129,22 @@ export enum LogoutStatus {
 export type Mutation = {
   __typename?: 'Mutation';
   RunScript?: Maybe<OutputScript>;
+  createDevice: Device;
+  createDeviceType: DeviceType;
+  createSoftware: Software;
   forgotPassword: ForgotPasswordResponse;
   login: AccessToken;
   logout: LogoutResponse;
   register: RegisterResponse;
+  removeDevice: Device;
+  removeDeviceType: DeviceType;
+  removeSoftware: Software;
   resendEmailVerification: ResendEmailVerificationResponse;
   resetPassword: ResetPasswordResponse;
+  updateDevice: Device;
+  updateDeviceType: DeviceType;
   updatePassword: UpdatePasswordResponse;
+  updateSoftware: Software;
   updateUser?: Maybe<User>;
   verifyEmail: EmailVerificationResponse;
 };
@@ -82,6 +152,21 @@ export type Mutation = {
 
 export type MutationRunScriptArgs = {
   inputScript?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationCreateDeviceArgs = {
+  input?: Maybe<CreateDevice>;
+};
+
+
+export type MutationCreateDeviceTypeArgs = {
+  input?: Maybe<CreateDeviceType>;
+};
+
+
+export type MutationCreateSoftwareArgs = {
+  input?: Maybe<CreateSoftware>;
 };
 
 
@@ -100,6 +185,21 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationRemoveDeviceArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationRemoveDeviceTypeArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationRemoveSoftwareArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationResendEmailVerificationArgs = {
   input: ResendEmailVerificationInput;
 };
@@ -110,8 +210,23 @@ export type MutationResetPasswordArgs = {
 };
 
 
+export type MutationUpdateDeviceArgs = {
+  input?: Maybe<UpdateDevice>;
+};
+
+
+export type MutationUpdateDeviceTypeArgs = {
+  input?: Maybe<UpdateDeviceType>;
+};
+
+
 export type MutationUpdatePasswordArgs = {
   input: UpdatePasswordInput;
+};
+
+
+export type MutationUpdateSoftwareArgs = {
+  input?: Maybe<UpdateSoftware>;
 };
 
 
@@ -181,9 +296,36 @@ export type PaginatorInfo = {
 
 export type Query = {
   __typename?: 'Query';
+  device_types?: Maybe<DeviceTypePaginator>;
+  devices?: Maybe<DevicePaginator>;
+  getDevice: Device;
   me?: Maybe<User>;
+  software?: Maybe<SoftwarePaginator>;
   user?: Maybe<User>;
   users?: Maybe<UserPaginator>;
+};
+
+
+export type QueryDevice_TypesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryDevicesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetDeviceArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QuerySoftwareArgs = {
+  first?: Maybe<Scalars['Int']>;
+  page?: Maybe<Scalars['Int']>;
 };
 
 
@@ -279,6 +421,23 @@ export type SimplePaginatorInfo = {
   perPage: Scalars['Int'];
 };
 
+export type Software = {
+  __typename?: 'Software';
+  created_at: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+};
+
+/** A paginated list of Software items. */
+export type SoftwarePaginator = {
+  __typename?: 'SoftwarePaginator';
+  /** A list of Software items. */
+  data: Array<Software>;
+  /** Pagination information about the list of items. */
+  paginatorInfo: PaginatorInfo;
+};
+
 /** The available directions for ordering a list of records. */
 export enum SortOrder {
   /** Sort records in ascending order. */
@@ -297,6 +456,19 @@ export enum Trashed {
   Without = 'WITHOUT'
 }
 
+export type UpdateDevice = {
+  device_type_id: Scalars['ID'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  port: Scalars['String'];
+  software: Array<Scalars['ID']>;
+};
+
+export type UpdateDeviceType = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export type UpdatePasswordInput = {
   current_password: Scalars['String'];
   password: Scalars['String'];
@@ -312,6 +484,11 @@ export enum UpdatePasswordStatus {
   /** PASSWORD_UPDATED */
   PasswordUpdated = 'PASSWORD_UPDATED'
 }
+
+export type UpdateSoftware = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
 
 export type UpdateUser = {
   id: Scalars['ID'];
@@ -389,7 +566,124 @@ export type GetUserQueryVariables = Exact<{
 
 export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id?: string | null | undefined, name?: string | null | undefined, email?: string | null | undefined } | null | undefined };
 
+export type GetSoftwareQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type GetSoftwareQuery = { __typename?: 'Query', software?: { __typename?: 'SoftwarePaginator', data: Array<{ __typename?: 'Software', id: string, name: string }> } | null | undefined };
+
+export type GetDeviceTypesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDeviceTypesQuery = { __typename?: 'Query', device_types?: { __typename?: 'DeviceTypePaginator', data: Array<{ __typename?: 'DeviceType', id: string, name: string }> } | null | undefined };
+
+export type GetDevicesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDevicesQuery = { __typename?: 'Query', devices?: { __typename?: 'DevicePaginator', data: Array<{ __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> }> } | null | undefined };
+
+export type GetDeviceByIdQueryVariables = Exact<{
+  input: Scalars['ID'];
+}>;
+
+
+export type GetDeviceByIdQuery = { __typename?: 'Query', getDevice: { __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> } };
+
+export type CreateDeviceMutationVariables = Exact<{
+  input?: Maybe<CreateDevice>;
+}>;
+
+
+export type CreateDeviceMutation = { __typename?: 'Mutation', createDevice: { __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> } };
+
+export type UpdateDeviceMutationVariables = Exact<{
+  input?: Maybe<UpdateDevice>;
+}>;
+
+
+export type UpdateDeviceMutation = { __typename?: 'Mutation', updateDevice: { __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> } };
+
+export type RemoveDeviceMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RemoveDeviceMutation = { __typename?: 'Mutation', removeDevice: { __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> } };
+
+export type UpdateSoftwareMutationVariables = Exact<{
+  input?: Maybe<UpdateSoftware>;
+}>;
+
+
+export type UpdateSoftwareMutation = { __typename?: 'Mutation', updateSoftware: { __typename?: 'Software', id: string, name: string } };
+
+export type CreateSoftwareMutationVariables = Exact<{
+  input?: Maybe<CreateSoftware>;
+}>;
+
+
+export type CreateSoftwareMutation = { __typename?: 'Mutation', createSoftware: { __typename?: 'Software', id: string, name: string } };
+
+export type CreateDeviceTypeMutationVariables = Exact<{
+  input?: Maybe<CreateDeviceType>;
+}>;
+
+
+export type CreateDeviceTypeMutation = { __typename?: 'Mutation', createDeviceType: { __typename?: 'DeviceType', id: string, name: string } };
+
+export type UpdateDeviceTypeMutationVariables = Exact<{
+  input?: Maybe<UpdateDeviceType>;
+}>;
+
+
+export type UpdateDeviceTypeMutation = { __typename?: 'Mutation', updateDeviceType: { __typename?: 'DeviceType', id: string, name: string } };
+
+export type RemoveDeviceTypeMutationVariables = Exact<{
+  input: Scalars['ID'];
+}>;
+
+
+export type RemoveDeviceTypeMutation = { __typename?: 'Mutation', removeDeviceType: { __typename?: 'DeviceType', id: string, name: string } };
+
+export type RemoveSoftwareMutationVariables = Exact<{
+  input: Scalars['ID'];
+}>;
+
+
+export type RemoveSoftwareMutation = { __typename?: 'Mutation', removeSoftware: { __typename?: 'Software', id: string, name: string } };
+
+export type SoftwareDataFragment = { __typename?: 'Software', id: string, name: string };
+
+export type DeviceTypeDataFragment = { __typename?: 'DeviceType', id: string, name: string };
+
+export type DeviceDataFragment = { __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> };
+
+export const DeviceTypeDataFragmentDoc = gql`
+    fragment DeviceTypeData on DeviceType {
+  id
+  name
+}
+    `;
+export const SoftwareDataFragmentDoc = gql`
+    fragment SoftwareData on Software {
+  id
+  name
+}
+    `;
+export const DeviceDataFragmentDoc = gql`
+    fragment DeviceData on Device {
+  id
+  name
+  port
+  deviceType {
+    ...DeviceTypeData
+  }
+  software {
+    ...SoftwareData
+  }
+  port
+}
+    ${DeviceTypeDataFragmentDoc}
+${SoftwareDataFragmentDoc}`;
 export const LoginDocument = gql`
     mutation login($login: LoginInput) {
   login(input: $login) {
@@ -562,3 +856,443 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const GetSoftwareDocument = gql`
+    query getSoftware {
+  software {
+    data {
+      ...SoftwareData
+    }
+  }
+}
+    ${SoftwareDataFragmentDoc}`;
+
+/**
+ * __useGetSoftwareQuery__
+ *
+ * To run a query within a React component, call `useGetSoftwareQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSoftwareQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSoftwareQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSoftwareQuery(baseOptions?: Apollo.QueryHookOptions<GetSoftwareQuery, GetSoftwareQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSoftwareQuery, GetSoftwareQueryVariables>(GetSoftwareDocument, options);
+      }
+export function useGetSoftwareLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSoftwareQuery, GetSoftwareQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSoftwareQuery, GetSoftwareQueryVariables>(GetSoftwareDocument, options);
+        }
+export type GetSoftwareQueryHookResult = ReturnType<typeof useGetSoftwareQuery>;
+export type GetSoftwareLazyQueryHookResult = ReturnType<typeof useGetSoftwareLazyQuery>;
+export type GetSoftwareQueryResult = Apollo.QueryResult<GetSoftwareQuery, GetSoftwareQueryVariables>;
+export const GetDeviceTypesDocument = gql`
+    query getDeviceTypes {
+  device_types {
+    data {
+      ...DeviceTypeData
+    }
+  }
+}
+    ${DeviceTypeDataFragmentDoc}`;
+
+/**
+ * __useGetDeviceTypesQuery__
+ *
+ * To run a query within a React component, call `useGetDeviceTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeviceTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeviceTypesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDeviceTypesQuery(baseOptions?: Apollo.QueryHookOptions<GetDeviceTypesQuery, GetDeviceTypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeviceTypesQuery, GetDeviceTypesQueryVariables>(GetDeviceTypesDocument, options);
+      }
+export function useGetDeviceTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeviceTypesQuery, GetDeviceTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeviceTypesQuery, GetDeviceTypesQueryVariables>(GetDeviceTypesDocument, options);
+        }
+export type GetDeviceTypesQueryHookResult = ReturnType<typeof useGetDeviceTypesQuery>;
+export type GetDeviceTypesLazyQueryHookResult = ReturnType<typeof useGetDeviceTypesLazyQuery>;
+export type GetDeviceTypesQueryResult = Apollo.QueryResult<GetDeviceTypesQuery, GetDeviceTypesQueryVariables>;
+export const GetDevicesDocument = gql`
+    query getDevices {
+  devices {
+    data {
+      ...DeviceData
+    }
+  }
+}
+    ${DeviceDataFragmentDoc}`;
+
+/**
+ * __useGetDevicesQuery__
+ *
+ * To run a query within a React component, call `useGetDevicesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDevicesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDevicesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDevicesQuery(baseOptions?: Apollo.QueryHookOptions<GetDevicesQuery, GetDevicesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDevicesQuery, GetDevicesQueryVariables>(GetDevicesDocument, options);
+      }
+export function useGetDevicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDevicesQuery, GetDevicesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDevicesQuery, GetDevicesQueryVariables>(GetDevicesDocument, options);
+        }
+export type GetDevicesQueryHookResult = ReturnType<typeof useGetDevicesQuery>;
+export type GetDevicesLazyQueryHookResult = ReturnType<typeof useGetDevicesLazyQuery>;
+export type GetDevicesQueryResult = Apollo.QueryResult<GetDevicesQuery, GetDevicesQueryVariables>;
+export const GetDeviceByIdDocument = gql`
+    query getDeviceByID($input: ID!) {
+  getDevice(id: $input) {
+    ...DeviceData
+  }
+}
+    ${DeviceDataFragmentDoc}`;
+
+/**
+ * __useGetDeviceByIdQuery__
+ *
+ * To run a query within a React component, call `useGetDeviceByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeviceByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeviceByIdQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetDeviceByIdQuery(baseOptions: Apollo.QueryHookOptions<GetDeviceByIdQuery, GetDeviceByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeviceByIdQuery, GetDeviceByIdQueryVariables>(GetDeviceByIdDocument, options);
+      }
+export function useGetDeviceByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeviceByIdQuery, GetDeviceByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeviceByIdQuery, GetDeviceByIdQueryVariables>(GetDeviceByIdDocument, options);
+        }
+export type GetDeviceByIdQueryHookResult = ReturnType<typeof useGetDeviceByIdQuery>;
+export type GetDeviceByIdLazyQueryHookResult = ReturnType<typeof useGetDeviceByIdLazyQuery>;
+export type GetDeviceByIdQueryResult = Apollo.QueryResult<GetDeviceByIdQuery, GetDeviceByIdQueryVariables>;
+export const CreateDeviceDocument = gql`
+    mutation createDevice($input: CreateDevice) {
+  createDevice(input: $input) {
+    ...DeviceData
+  }
+}
+    ${DeviceDataFragmentDoc}`;
+export type CreateDeviceMutationFn = Apollo.MutationFunction<CreateDeviceMutation, CreateDeviceMutationVariables>;
+
+/**
+ * __useCreateDeviceMutation__
+ *
+ * To run a mutation, you first call `useCreateDeviceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDeviceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDeviceMutation, { data, loading, error }] = useCreateDeviceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDeviceMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeviceMutation, CreateDeviceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDeviceMutation, CreateDeviceMutationVariables>(CreateDeviceDocument, options);
+      }
+export type CreateDeviceMutationHookResult = ReturnType<typeof useCreateDeviceMutation>;
+export type CreateDeviceMutationResult = Apollo.MutationResult<CreateDeviceMutation>;
+export type CreateDeviceMutationOptions = Apollo.BaseMutationOptions<CreateDeviceMutation, CreateDeviceMutationVariables>;
+export const UpdateDeviceDocument = gql`
+    mutation updateDevice($input: UpdateDevice) {
+  updateDevice(input: $input) {
+    ...DeviceData
+  }
+}
+    ${DeviceDataFragmentDoc}`;
+export type UpdateDeviceMutationFn = Apollo.MutationFunction<UpdateDeviceMutation, UpdateDeviceMutationVariables>;
+
+/**
+ * __useUpdateDeviceMutation__
+ *
+ * To run a mutation, you first call `useUpdateDeviceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDeviceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDeviceMutation, { data, loading, error }] = useUpdateDeviceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateDeviceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDeviceMutation, UpdateDeviceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDeviceMutation, UpdateDeviceMutationVariables>(UpdateDeviceDocument, options);
+      }
+export type UpdateDeviceMutationHookResult = ReturnType<typeof useUpdateDeviceMutation>;
+export type UpdateDeviceMutationResult = Apollo.MutationResult<UpdateDeviceMutation>;
+export type UpdateDeviceMutationOptions = Apollo.BaseMutationOptions<UpdateDeviceMutation, UpdateDeviceMutationVariables>;
+export const RemoveDeviceDocument = gql`
+    mutation removeDevice($id: ID!) {
+  removeDevice(id: $id) {
+    ...DeviceData
+  }
+}
+    ${DeviceDataFragmentDoc}`;
+export type RemoveDeviceMutationFn = Apollo.MutationFunction<RemoveDeviceMutation, RemoveDeviceMutationVariables>;
+
+/**
+ * __useRemoveDeviceMutation__
+ *
+ * To run a mutation, you first call `useRemoveDeviceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveDeviceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeDeviceMutation, { data, loading, error }] = useRemoveDeviceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveDeviceMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDeviceMutation, RemoveDeviceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDeviceMutation, RemoveDeviceMutationVariables>(RemoveDeviceDocument, options);
+      }
+export type RemoveDeviceMutationHookResult = ReturnType<typeof useRemoveDeviceMutation>;
+export type RemoveDeviceMutationResult = Apollo.MutationResult<RemoveDeviceMutation>;
+export type RemoveDeviceMutationOptions = Apollo.BaseMutationOptions<RemoveDeviceMutation, RemoveDeviceMutationVariables>;
+export const UpdateSoftwareDocument = gql`
+    mutation updateSoftware($input: UpdateSoftware) {
+  updateSoftware(input: $input) {
+    ...SoftwareData
+  }
+}
+    ${SoftwareDataFragmentDoc}`;
+export type UpdateSoftwareMutationFn = Apollo.MutationFunction<UpdateSoftwareMutation, UpdateSoftwareMutationVariables>;
+
+/**
+ * __useUpdateSoftwareMutation__
+ *
+ * To run a mutation, you first call `useUpdateSoftwareMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSoftwareMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSoftwareMutation, { data, loading, error }] = useUpdateSoftwareMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateSoftwareMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSoftwareMutation, UpdateSoftwareMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSoftwareMutation, UpdateSoftwareMutationVariables>(UpdateSoftwareDocument, options);
+      }
+export type UpdateSoftwareMutationHookResult = ReturnType<typeof useUpdateSoftwareMutation>;
+export type UpdateSoftwareMutationResult = Apollo.MutationResult<UpdateSoftwareMutation>;
+export type UpdateSoftwareMutationOptions = Apollo.BaseMutationOptions<UpdateSoftwareMutation, UpdateSoftwareMutationVariables>;
+export const CreateSoftwareDocument = gql`
+    mutation createSoftware($input: CreateSoftware) {
+  createSoftware(input: $input) {
+    ...SoftwareData
+  }
+}
+    ${SoftwareDataFragmentDoc}`;
+export type CreateSoftwareMutationFn = Apollo.MutationFunction<CreateSoftwareMutation, CreateSoftwareMutationVariables>;
+
+/**
+ * __useCreateSoftwareMutation__
+ *
+ * To run a mutation, you first call `useCreateSoftwareMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSoftwareMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSoftwareMutation, { data, loading, error }] = useCreateSoftwareMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSoftwareMutation(baseOptions?: Apollo.MutationHookOptions<CreateSoftwareMutation, CreateSoftwareMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSoftwareMutation, CreateSoftwareMutationVariables>(CreateSoftwareDocument, options);
+      }
+export type CreateSoftwareMutationHookResult = ReturnType<typeof useCreateSoftwareMutation>;
+export type CreateSoftwareMutationResult = Apollo.MutationResult<CreateSoftwareMutation>;
+export type CreateSoftwareMutationOptions = Apollo.BaseMutationOptions<CreateSoftwareMutation, CreateSoftwareMutationVariables>;
+export const CreateDeviceTypeDocument = gql`
+    mutation createDeviceType($input: CreateDeviceType) {
+  createDeviceType(input: $input) {
+    ...DeviceTypeData
+  }
+}
+    ${DeviceTypeDataFragmentDoc}`;
+export type CreateDeviceTypeMutationFn = Apollo.MutationFunction<CreateDeviceTypeMutation, CreateDeviceTypeMutationVariables>;
+
+/**
+ * __useCreateDeviceTypeMutation__
+ *
+ * To run a mutation, you first call `useCreateDeviceTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDeviceTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDeviceTypeMutation, { data, loading, error }] = useCreateDeviceTypeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDeviceTypeMutation(baseOptions?: Apollo.MutationHookOptions<CreateDeviceTypeMutation, CreateDeviceTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDeviceTypeMutation, CreateDeviceTypeMutationVariables>(CreateDeviceTypeDocument, options);
+      }
+export type CreateDeviceTypeMutationHookResult = ReturnType<typeof useCreateDeviceTypeMutation>;
+export type CreateDeviceTypeMutationResult = Apollo.MutationResult<CreateDeviceTypeMutation>;
+export type CreateDeviceTypeMutationOptions = Apollo.BaseMutationOptions<CreateDeviceTypeMutation, CreateDeviceTypeMutationVariables>;
+export const UpdateDeviceTypeDocument = gql`
+    mutation updateDeviceType($input: UpdateDeviceType) {
+  updateDeviceType(input: $input) {
+    ...DeviceTypeData
+  }
+}
+    ${DeviceTypeDataFragmentDoc}`;
+export type UpdateDeviceTypeMutationFn = Apollo.MutationFunction<UpdateDeviceTypeMutation, UpdateDeviceTypeMutationVariables>;
+
+/**
+ * __useUpdateDeviceTypeMutation__
+ *
+ * To run a mutation, you first call `useUpdateDeviceTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDeviceTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDeviceTypeMutation, { data, loading, error }] = useUpdateDeviceTypeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateDeviceTypeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDeviceTypeMutation, UpdateDeviceTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDeviceTypeMutation, UpdateDeviceTypeMutationVariables>(UpdateDeviceTypeDocument, options);
+      }
+export type UpdateDeviceTypeMutationHookResult = ReturnType<typeof useUpdateDeviceTypeMutation>;
+export type UpdateDeviceTypeMutationResult = Apollo.MutationResult<UpdateDeviceTypeMutation>;
+export type UpdateDeviceTypeMutationOptions = Apollo.BaseMutationOptions<UpdateDeviceTypeMutation, UpdateDeviceTypeMutationVariables>;
+export const RemoveDeviceTypeDocument = gql`
+    mutation removeDeviceType($input: ID!) {
+  removeDeviceType(id: $input) {
+    ...DeviceTypeData
+  }
+}
+    ${DeviceTypeDataFragmentDoc}`;
+export type RemoveDeviceTypeMutationFn = Apollo.MutationFunction<RemoveDeviceTypeMutation, RemoveDeviceTypeMutationVariables>;
+
+/**
+ * __useRemoveDeviceTypeMutation__
+ *
+ * To run a mutation, you first call `useRemoveDeviceTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveDeviceTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeDeviceTypeMutation, { data, loading, error }] = useRemoveDeviceTypeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveDeviceTypeMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDeviceTypeMutation, RemoveDeviceTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDeviceTypeMutation, RemoveDeviceTypeMutationVariables>(RemoveDeviceTypeDocument, options);
+      }
+export type RemoveDeviceTypeMutationHookResult = ReturnType<typeof useRemoveDeviceTypeMutation>;
+export type RemoveDeviceTypeMutationResult = Apollo.MutationResult<RemoveDeviceTypeMutation>;
+export type RemoveDeviceTypeMutationOptions = Apollo.BaseMutationOptions<RemoveDeviceTypeMutation, RemoveDeviceTypeMutationVariables>;
+export const RemoveSoftwareDocument = gql`
+    mutation removeSoftware($input: ID!) {
+  removeSoftware(id: $input) {
+    ...SoftwareData
+  }
+}
+    ${SoftwareDataFragmentDoc}`;
+export type RemoveSoftwareMutationFn = Apollo.MutationFunction<RemoveSoftwareMutation, RemoveSoftwareMutationVariables>;
+
+/**
+ * __useRemoveSoftwareMutation__
+ *
+ * To run a mutation, you first call `useRemoveSoftwareMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveSoftwareMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeSoftwareMutation, { data, loading, error }] = useRemoveSoftwareMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveSoftwareMutation(baseOptions?: Apollo.MutationHookOptions<RemoveSoftwareMutation, RemoveSoftwareMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveSoftwareMutation, RemoveSoftwareMutationVariables>(RemoveSoftwareDocument, options);
+      }
+export type RemoveSoftwareMutationHookResult = ReturnType<typeof useRemoveSoftwareMutation>;
+export type RemoveSoftwareMutationResult = Apollo.MutationResult<RemoveSoftwareMutation>;
+export type RemoveSoftwareMutationOptions = Apollo.BaseMutationOptions<RemoveSoftwareMutation, RemoveSoftwareMutationVariables>;

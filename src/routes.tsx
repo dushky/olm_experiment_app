@@ -6,6 +6,10 @@ import Login from './views/login/Login'
 import { Outlet } from 'react-router-dom'
 import Page404 from './views/pages/Page404'
 import Dashboard from './views/dashboard'
+import SoftwareWrapper from './views/software/SoftwareWrapper'
+import DeviceTypeWrapper from 'views/device-type/DeviceTypeWrapper'
+import DeviceWrapper from 'views/device/DeviceWrapper'
+import DeviceDetailWrapper from 'views/device/DeviceDetailWrapper'
 
 
 const routes: RouteObject[] = [
@@ -16,6 +20,10 @@ const routes: RouteObject[] = [
     [
       { path: 'test', element: <Test/> },
       { path: 'dashboard', element: <Dashboard/> },
+      { path: 'software', element: <SoftwareWrapper/> },
+      { path: 'device-types', element: <DeviceTypeWrapper/> },
+      { path: 'devices', element: <DeviceWrapper/> },
+      { path: 'devices/:id', element: <DeviceDetailWrapper/> },
       { path: "*", element: <Navigate to="/404"/>}
     ]
   },

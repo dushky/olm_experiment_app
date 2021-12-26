@@ -5,9 +5,9 @@ import { Grid } from '@mui/material'
 
 
 // constants
-import { gridSpacing } from '../../assets/constants'
+import { gridSpacing } from 'assets/constants'
 import DashboardChart from './DashboardChart'
-import { useRunScriptMutation } from '../../generated/graphql'
+import { useRunScriptMutation } from "generated/graphql"
 import ExperimentForm from './ExperimentForm'
 
 const Dashboard = () => {
