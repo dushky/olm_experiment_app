@@ -12,6 +12,7 @@ import DeviceWrapper from 'views/device/DeviceWrapper'
 import DeviceDetailWrapper from 'views/device/DeviceDetailWrapper'
 
 
+
 const routes: RouteObject[] = [
   {
     path: 'app',
@@ -24,6 +25,7 @@ const routes: RouteObject[] = [
       { path: 'device-types', element: <DeviceTypeWrapper/> },
       { path: 'devices', element: <DeviceWrapper/> },
       { path: 'devices/:id', element: <DeviceDetailWrapper/> },
+      { path: '/app/', element: localStorage.getItem('token') ? <Navigate to="/app/dashboard"/> : <Navigate to="/login"/> },
       { path: "*", element: <Navigate to="/404"/>}
     ]
   },
@@ -33,7 +35,7 @@ const routes: RouteObject[] = [
     children: 
     [
       { path: "*", element: <Navigate to="/404"/> },
-      { path: "/", element: <Navigate to="/login"/> },
+      { path: "/", element: localStorage.getItem('token') ? <Navigate to="/app/dashboard"/> : <Navigate to="/login"/> },
       { path: "404", element: <Page404/> },
       { path: 'login', element: <Login/> },
       { path: 'register', element: <Test/> }

@@ -37,14 +37,10 @@ const CellDropdown = ({options, multiple, label, change, selectedValue, selectNa
     
     const handleChange = (event: any) => {
         const value = event.target.value;
-        console.log(event);
-        
+
         setSelected(value);
         change(event)
-    };
-
-    console.log(selected);
-    
+    };   
 
     return (
         <Grid>

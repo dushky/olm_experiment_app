@@ -7,12 +7,16 @@ import { Grid } from '@mui/material'
 // constants
 import { gridSpacing } from 'assets/constants'
 import DashboardChart from './DashboardChart'
-import { useRunScriptMutation } from "generated/graphql"
+import { useRunScriptMutation, useGetDevicesQuery } from "generated/graphql"
 import ExperimentForm from './ExperimentForm'
+import Page404 from "views/pages/Page404"
+import ExperimentFormWrapper from './ExperimentFormWrapper'
+import MainCard from 'ui-components/cards/MainCard'
 
 const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(false);
+    const { data: devicesData, loading: devicesLoading, error: devicesError } = useGetDevicesQuery()
 
     const [mutation, { data, loading, error }] = useRunScriptMutation({
         variables: {
@@ -33,7 +37,7 @@ const Dashboard = () => {
 
     const handleSubmit = async () => {
         setButtonLoading(true)
-        await mutation()
+        //await mutation()
         setButtonLoading(false)
     }
 
@@ -104,6 +108,8 @@ const Dashboard = () => {
         ]
     };
 
+    if (!devicesData)
+        return <Page404/>
 
     return (
         <Grid container spacing={gridSpacing}>
@@ -113,7 +119,9 @@ const Dashboard = () => {
                         <DashboardChart chartData={chartData} isLoading={isLoading} />
                     </Grid>
                     <Grid item xs={6} md={6}>
-                        <ExperimentForm handleFormSubmit={handleSubmit} loading={buttonLoading}/>
+                        <MainCard>
+                            <ExperimentFormWrapper handleFormSubmit={handleSubmit} loading={buttonLoading} devices={devicesData!.devices!.data}/>
+                        </MainCard>
                         {/* TODO: Component which render form */}
                     </Grid>
                 </Grid>

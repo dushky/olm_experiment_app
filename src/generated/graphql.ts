@@ -23,11 +23,42 @@ export type AccessToken = {
   token: Scalars['String'];
 };
 
+export type CommandsPerDevice = {
+  __typename?: 'CommandsPerDevice';
+  deviceName?: Maybe<Scalars['String']>;
+};
+
+export type Config = {
+  __typename?: 'Config';
+  items?: Maybe<Array<Maybe<ConfigMapTuple>>>;
+};
+
+export type ConfigInput = {
+  deviceName?: Maybe<DeviceName>;
+  software?: Maybe<ExperimentsSoftware>;
+};
+
+export type ConfigItem = {
+  __typename?: 'ConfigItem';
+  name?: Maybe<Scalars['String']>;
+  placeholder?: Maybe<Scalars['String']>;
+  rules?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+export type ConfigMapTuple = {
+  __typename?: 'ConfigMapTuple';
+  items?: Maybe<Array<Maybe<ConfigItem>>>;
+  scriptName?: Maybe<ScriptName>;
+};
+
 export type CreateDevice = {
   device_type_id: Scalars['ID'];
   name: Scalars['String'];
   port: Scalars['String'];
   software: Array<Scalars['ID']>;
+  status?: Maybe<DeviceStatus>;
 };
 
 export type CreateDeviceType = {
@@ -49,6 +80,15 @@ export type Device = {
   status?: Maybe<DeviceStatus>;
   updated_at: Scalars['DateTime'];
 };
+
+export enum DeviceName {
+  /** led_cube */
+  LedCube = 'led_cube',
+  /** segway */
+  Segway = 'segway',
+  /** tos1a */
+  Tos1a = 'tos1a'
+}
 
 /** A paginated list of Device items. */
 export type DevicePaginator = {
@@ -92,6 +132,15 @@ export type EmailVerificationResponse = {
 export enum EmailVerificationStatus {
   /** VERIFIED */
   Verified = 'VERIFIED'
+}
+
+export enum ExperimentsSoftware {
+  /** matlab */
+  Matlab = 'matlab',
+  /** openloop */
+  Openlopp = 'openlopp',
+  /** scilab */
+  Scilab = 'scilab'
 }
 
 export type ForgotPasswordInput = {
@@ -296,6 +345,7 @@ export type PaginatorInfo = {
 
 export type Query = {
   __typename?: 'Query';
+  GetConfigByDeviceType?: Maybe<Config>;
   device_types?: Maybe<DeviceTypePaginator>;
   devices?: Maybe<DevicePaginator>;
   getDevice: Device;
@@ -303,6 +353,11 @@ export type Query = {
   software?: Maybe<SoftwarePaginator>;
   user?: Maybe<User>;
   users?: Maybe<UserPaginator>;
+};
+
+
+export type QueryGetConfigByDeviceTypeArgs = {
+  configInput?: Maybe<ConfigInput>;
 };
 
 
@@ -405,6 +460,17 @@ export type RunScriptType = {
   __typename?: 'RunScriptType';
   command?: Maybe<Scalars['String']>;
 };
+
+export enum ScriptName {
+  /** change */
+  Change = 'change',
+  /** start */
+  Start = 'start',
+  /** stop */
+  Stop = 'stop',
+  /** update */
+  Update = 'update'
+}
 
 /** Information about pagination using a simple paginator. */
 export type SimplePaginatorInfo = {
@@ -575,6 +641,13 @@ export type GetDeviceTypesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetDeviceTypesQuery = { __typename?: 'Query', device_types?: { __typename?: 'DeviceTypePaginator', data: Array<{ __typename?: 'DeviceType', id: string, name: string }> } | null | undefined };
+
+export type GetDeviceConfigQueryVariables = Exact<{
+  configInput?: Maybe<ConfigInput>;
+}>;
+
+
+export type GetDeviceConfigQuery = { __typename?: 'Query', GetConfigByDeviceType?: { __typename?: 'Config', items?: Array<{ __typename?: 'ConfigMapTuple', scriptName?: ScriptName | null | undefined, items?: Array<{ __typename?: 'ConfigItem', name?: string | null | undefined, rules?: string | null | undefined, type?: string | null | undefined, title?: string | null | undefined, placeholder?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined };
 
 export type GetDevicesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -928,6 +1001,50 @@ export function useGetDeviceTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetDeviceTypesQueryHookResult = ReturnType<typeof useGetDeviceTypesQuery>;
 export type GetDeviceTypesLazyQueryHookResult = ReturnType<typeof useGetDeviceTypesLazyQuery>;
 export type GetDeviceTypesQueryResult = Apollo.QueryResult<GetDeviceTypesQuery, GetDeviceTypesQueryVariables>;
+export const GetDeviceConfigDocument = gql`
+    query getDeviceConfig($configInput: ConfigInput) {
+  GetConfigByDeviceType(configInput: $configInput) {
+    items {
+      scriptName
+      items {
+        name
+        rules
+        type
+        title
+        placeholder
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDeviceConfigQuery__
+ *
+ * To run a query within a React component, call `useGetDeviceConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeviceConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeviceConfigQuery({
+ *   variables: {
+ *      configInput: // value for 'configInput'
+ *   },
+ * });
+ */
+export function useGetDeviceConfigQuery(baseOptions?: Apollo.QueryHookOptions<GetDeviceConfigQuery, GetDeviceConfigQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeviceConfigQuery, GetDeviceConfigQueryVariables>(GetDeviceConfigDocument, options);
+      }
+export function useGetDeviceConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeviceConfigQuery, GetDeviceConfigQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeviceConfigQuery, GetDeviceConfigQueryVariables>(GetDeviceConfigDocument, options);
+        }
+export type GetDeviceConfigQueryHookResult = ReturnType<typeof useGetDeviceConfigQuery>;
+export type GetDeviceConfigLazyQueryHookResult = ReturnType<typeof useGetDeviceConfigLazyQuery>;
+export type GetDeviceConfigQueryResult = Apollo.QueryResult<GetDeviceConfigQuery, GetDeviceConfigQueryVariables>;
 export const GetDevicesDocument = gql`
     query getDevices {
   devices {

@@ -50,6 +50,21 @@ query getDeviceTypes {
   }
 }
 
+query getDeviceConfig($configInput: ConfigInput) {
+  GetConfigByDeviceType(configInput: $configInput) {
+    items {
+      scriptName
+      items {
+        name
+        rules
+        type
+        title
+        placeholder
+      }
+    }
+  }
+}
+
 query getDevices {
   devices {
     data {
