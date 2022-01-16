@@ -7,7 +7,7 @@ import { Grid } from '@mui/material'
 // constants
 import { gridSpacing } from 'assets/constants'
 import DashboardChart from './DashboardChart'
-import { useRunScriptMutation, useGetDevicesQuery } from "generated/graphql"
+import { useRunScriptMutation, useGetDevicesQuery, DeviceConfig } from "generated/graphql"
 import ExperimentForm from './ExperimentForm'
 import Page404 from "views/pages/Page404"
 import ExperimentFormWrapper from './ExperimentFormWrapper'
@@ -18,11 +18,7 @@ const Dashboard = () => {
     const [buttonLoading, setButtonLoading] = useState(false);
     const { data: devicesData, loading: devicesLoading, error: devicesError } = useGetDevicesQuery()
 
-    const [mutation, { data, loading, error }] = useRunScriptMutation({
-        variables: {
-            'input': "test"
-        }
-    });
+    const [mutation, { data, loading, error }] = useRunScriptMutation()
     const series: {
         name: string,
         data: []
@@ -35,9 +31,17 @@ const Dashboard = () => {
         setLoading(false);        
     }, []);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (values: any, selectedDevice: DeviceConfig, selectedCommand: string) => {
         setButtonLoading(true)
-        //await mutation()
+        await mutation({
+            variables: {
+                input: {
+                    inputParameter: values,
+                    scriptName: selectedCommand,
+                    device: selectedDevice
+                }
+            }
+        })
         setButtonLoading(false)
     }
 

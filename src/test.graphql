@@ -11,8 +11,8 @@ mutation logout {
   }
 }
 
-mutation runScript($input: String) {
-  RunScript(inputScript: $input) {
+mutation runScript($input: RunScriptInput) {
+  RunScript(runScriptInput: $input) {
     output
   }
 }

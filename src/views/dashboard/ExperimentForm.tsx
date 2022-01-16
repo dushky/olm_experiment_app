@@ -5,7 +5,7 @@ import { useFormik } from 'formik'
 // mui
 import PlayCircleFilledOutlinedIcon from '@mui/icons-material/PlayCircleFilledOutlined'
 import { LoadingButton } from '@mui/lab'
-import { ConfigInput, ConfigMapTuple, DeviceDataFragment, useGetDeviceConfigQuery } from 'generated/graphql'
+import { DeviceConfig, DeviceDataFragment, SoftwareDataFragment, useGetDeviceByIdQuery } from 'generated/graphql'
 import { Grid, Typography } from '@mui/material'
 import { gridSpacing, Update } from 'assets/constants'
 import CellDropdown from 'views/device/CellDropdown'
@@ -14,11 +14,11 @@ import { buildForm } from "./ExperimentFormBuilder"
 
 
 interface Props {
-    handleFormSubmit: () => void
+    handleFormSubmit: (values: any, configInput: DeviceConfig, selectedCommand: string) => Promise<void>
     loading: boolean
     devices: DeviceDataFragment[]
-    selected: ConfigInput
-    setSelected: ({}: ConfigInput) => any
+    selected: DeviceConfig
+    setSelected: ({}: any) => any
     data: any
 }
 
@@ -44,16 +44,34 @@ const ExperimentForm = (props: Props) => {
           user_function: ''
         },
         onSubmit: (values, {resetForm}) => {
-            console.log("ON SUBMIT: ", values);
-            
-            //handleSubmit(values)
             resetForm()
+            let vals = ""
+            Object.entries(values).map(([key, value], index) => {
+                if (value) {
+                    if (vals === "") {
+                        vals = vals + key + ":" + value
+                    } else {
+                        vals = vals + "," + key + ":" + value
+                    }
+                } 
+            })
+            console.log("DATA: ", data);
+            console.log("SELECTED COMMAND: ", selectedCommand);
+               
+            let command = data.filter((item: any, index: number) => index === selectedCommand)[0]
+            // console.log(command.scriptName);
+            
+            handleSubmit(vals, selected, command.scriptName)
         }
-      });
+    });
 
     const [selectedCommand, setSelectedCommand] = useState(0)
 
-    
+    const {data: deviceData, loading: deviceLoading, error: deviceError} = useGetDeviceByIdQuery({
+        variables: {
+            input: selected.deviceID
+        }
+    })
     
     const filterDevices = (): Update[] => {
         return devices.map((item) => {
@@ -65,19 +83,39 @@ const ExperimentForm = (props: Props) => {
     }
 
     const filterCommands = (): Update[]=> {
-        return data.map((item: any, index: number) => {
+        if (data) {
+            return data.map((item: any, index: number) => {
+                return {
+                    id: index,
+                    name: item.scriptName
+                }
+            })
+        }
+        return []
+    }
+
+    const filterSoftware = (software: SoftwareDataFragment[]): Update[] => {
+        return software.map((item) => {
             return {
-                id: index,
-                name: item.scriptName
+                id: item.id,
+                name: item.name
             }
         })
     }
 
     const onDeviceChanged = (e: any) => {
         let dev = devices.filter((item) => item.id == e.target.value)[0]
-        setSelected({
+        setSelected({ 
             deviceName: dev.deviceType.name as any,
-            software: dev.software[0].name as any
+            software: "",
+            deviceID: dev.id
+        })        
+    }
+
+    const onSoftwareChanged = (e: any) => {
+        let software = deviceData?.getDevice.software.filter((item) => item.id == e.target.value)[0]
+        setSelected({
+            ...selected, software: software?.name 
         })
     }
 
@@ -86,9 +124,45 @@ const ExperimentForm = (props: Props) => {
     }
 
     const buildFormik = () => {
-        return data[selectedCommand].items.map((item: any) => {
-            return buildForm(item, formik)
-        })
+        if (data && data[selectedCommand]) 
+            return data[selectedCommand].items.map((item: any) => {
+                return buildForm(item, formik)
+            })
+    }
+
+    const buildCommandsSelect = () => {
+        if (data) {
+            return (
+                <Grid item xs={4} md={4}>
+                    <CellDropdown
+                        options={filterCommands()}
+                        multiple={false}
+                        label='Pick command'
+                        change={onCommandChanged}
+                        selectedValue={{id: "", name: ""}}
+                        selectName='command'
+                    />
+                </Grid>
+            )
+        }
+    }
+
+
+    const buildSoftwareSelect = () => {
+        if (deviceData?.getDevice.software) {
+            return (
+                <Grid item xs={4} md={4}>
+                    <CellDropdown
+                        options={filterSoftware(deviceData.getDevice.software)}
+                        multiple={false}
+                        label='Pick software'
+                        change={onSoftwareChanged}
+                        selectedValue={{id: "", name: ""}}
+                        selectName='software'
+                    />
+                </Grid>
+            )
+        } 
     }
 
     return (
@@ -108,16 +182,8 @@ const ExperimentForm = (props: Props) => {
                             selectName='device'
                         />
                     </Grid>
-                    <Grid item xs={4} md={4}>
-                        <CellDropdown
-                            options={filterCommands()}
-                            multiple={false}
-                            label='Pick command'
-                            change={onCommandChanged}
-                            selectedValue={{id: "", name: ""}}
-                            selectName='command'
-                        />
-                    </Grid>
+                    {buildSoftwareSelect()}
+                    {buildCommandsSelect()}
                     {buildFormik()}
                     <Grid item xs={4} md={4} margin="auto">
                         <LoadingButton
@@ -126,7 +192,6 @@ const ExperimentForm = (props: Props) => {
                             startIcon={<PlayCircleFilledOutlinedIcon />}
                             variant="contained"
                             type='submit'
-                            //onClick={handleSubmit}
                         > 
                             Run experiment
                         </LoadingButton>

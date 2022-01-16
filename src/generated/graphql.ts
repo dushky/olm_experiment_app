@@ -81,6 +81,12 @@ export type Device = {
   updated_at: Scalars['DateTime'];
 };
 
+export type DeviceConfig = {
+  deviceID: Scalars['ID'];
+  deviceName?: Maybe<DeviceName>;
+  software?: Maybe<ExperimentsSoftware>;
+};
+
 export enum DeviceName {
   /** led_cube */
   LedCube = 'led_cube',
@@ -138,7 +144,7 @@ export enum ExperimentsSoftware {
   /** matlab */
   Matlab = 'matlab',
   /** openloop */
-  Openlopp = 'openlopp',
+  Openloop = 'openloop',
   /** scilab */
   Scilab = 'scilab'
 }
@@ -200,7 +206,7 @@ export type Mutation = {
 
 
 export type MutationRunScriptArgs = {
-  inputScript?: Maybe<Scalars['String']>;
+  runScriptInput?: Maybe<RunScriptInput>;
 };
 
 
@@ -456,6 +462,12 @@ export type ResetPasswordUrlInput = {
   url: Scalars['String'];
 };
 
+export type RunScriptInput = {
+  device?: Maybe<DeviceConfig>;
+  inputParameter?: Maybe<Scalars['String']>;
+  scriptName?: Maybe<Scalars['String']>;
+};
+
 export type RunScriptType = {
   __typename?: 'RunScriptType';
   command?: Maybe<Scalars['String']>;
@@ -614,7 +626,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutResponse', status: LogoutStatus, message: string } };
 
 export type RunScriptMutationVariables = Exact<{
-  input?: Maybe<Scalars['String']>;
+  input?: Maybe<RunScriptInput>;
 }>;
 
 
@@ -824,8 +836,8 @@ export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RunScriptDocument = gql`
-    mutation runScript($input: String) {
-  RunScript(inputScript: $input) {
+    mutation runScript($input: RunScriptInput) {
+  RunScript(runScriptInput: $input) {
     output
   }
 }
