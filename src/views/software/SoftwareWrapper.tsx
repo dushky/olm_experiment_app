@@ -6,7 +6,7 @@ import Page404 from 'views/pages/Page404'
 
 
 const SoftwareWrapper = () => {
-    const { data, loading, error } = useGetSoftwareQuery();
+    const { data, loading, error } = useGetSoftwareQuery({fetchPolicy: "no-cache"});
 
     if (error || loading || !data)
         return <Page404/>

@@ -20,7 +20,6 @@ import {
     CreateDevice 
 } from 'generated/graphql'
 import AddDeviceForm from './AddDeviceForm'
-import CellDropdown from './CellDropdown'
 import { useNavigate } from 'react-router'
 
 
@@ -29,10 +28,11 @@ import { useNavigate } from 'react-router'
 interface Props {
     device: DeviceDataFragment[],
     software: SoftwareDataFragment[],
-    deviceTypes: DeviceTypeDataFragment[]
+    deviceTypes: DeviceTypeDataFragment[],
+    loading: boolean
 }
 
-const Device = ({device, software, deviceTypes}: Props) => {
+const Device = ({device, software, deviceTypes, loading}: Props) => {
     const [pageSize, setPageSize] = useState<number>(10)
     const [open, setOpen] = useState<boolean>(false)
     const [createMutation] = useCreateDeviceMutation()
@@ -234,7 +234,7 @@ const Device = ({device, software, deviceTypes}: Props) => {
                     <div style={{ height: '100%', width: '100%' }}>
                         <DataGrid
                             rows={rows}
-                            loading={rows.length === 0}
+                            loading={loading}
                             columns={columns}
                             pageSize={pageSize}
                             rowsPerPageOptions={[5, 10, 20, 50]}

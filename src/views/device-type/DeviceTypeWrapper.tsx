@@ -8,7 +8,7 @@ interface Props {
 }
 
 const DeviceTypeWrapper = (props: Props) => {
-    const { data, loading, error } = useGetDeviceTypesQuery()
+    const { data, loading, error } = useGetDeviceTypesQuery({fetchPolicy: "no-cache"})
 
     if (error || loading || !data)
         return <Page404/>

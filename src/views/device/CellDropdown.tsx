@@ -54,7 +54,7 @@ const CellDropdown = ({options, multiple, label, change, selectedValue, selectNa
             fullWidth
           >
             {options.map((option: Update) => (
-              <MenuItem value={option.id}>
+              <MenuItem value={option.id} key={option.id}>
                 {option.name}
               </MenuItem>
             ))}
