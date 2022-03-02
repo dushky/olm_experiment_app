@@ -23,19 +23,14 @@ export type AccessToken = {
   token: Scalars['String'];
 };
 
-export type CommandsPerDevice = {
-  __typename?: 'CommandsPerDevice';
-  deviceName?: Maybe<Scalars['String']>;
-};
-
 export type Config = {
   __typename?: 'Config';
   items?: Maybe<Array<Maybe<ConfigMapTuple>>>;
 };
 
 export type ConfigInput = {
-  deviceName?: Maybe<DeviceName>;
-  software?: Maybe<ExperimentsSoftware>;
+  deviceName?: Maybe<Scalars['String']>;
+  software?: Maybe<Scalars['String']>;
 };
 
 export type ConfigItem = {
@@ -83,18 +78,9 @@ export type Device = {
 
 export type DeviceConfig = {
   deviceID: Scalars['ID'];
-  deviceName?: Maybe<DeviceName>;
-  software?: Maybe<ExperimentsSoftware>;
+  deviceName?: Maybe<Scalars['String']>;
+  software?: Maybe<Scalars['String']>;
 };
-
-export enum DeviceName {
-  /** led_cube */
-  LedCube = 'led_cube',
-  /** segway */
-  Segway = 'segway',
-  /** tos1a */
-  Tos1a = 'tos1a'
-}
 
 /** A paginated list of Device items. */
 export type DevicePaginator = {
@@ -140,15 +126,6 @@ export enum EmailVerificationStatus {
   Verified = 'VERIFIED'
 }
 
-export enum ExperimentsSoftware {
-  /** matlab */
-  Matlab = 'matlab',
-  /** openloop */
-  Openloop = 'openloop',
-  /** scilab */
-  Scilab = 'scilab'
-}
-
 export type ForgotPasswordInput = {
   email: Scalars['String'];
   reset_password_url?: Maybe<ResetPasswordUrlInput>;
@@ -183,7 +160,9 @@ export enum LogoutStatus {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  ChangeScript?: Maybe<OutputScript>;
   RunScript?: Maybe<OutputScript>;
+  StopScript?: Maybe<OutputScript>;
   createDevice: Device;
   createDeviceType: DeviceType;
   createSoftware: Software;
@@ -205,7 +184,17 @@ export type Mutation = {
 };
 
 
+export type MutationChangeScriptArgs = {
+  runScriptInput?: Maybe<RunScriptInput>;
+};
+
+
 export type MutationRunScriptArgs = {
+  runScriptInput?: Maybe<RunScriptInput>;
+};
+
+
+export type MutationStopScriptArgs = {
   runScriptInput?: Maybe<RunScriptInput>;
 };
 
@@ -302,6 +291,26 @@ export type OrderByClause = {
   order: SortOrder;
 };
 
+/** Aggregate functions when ordering by a relation without specifying a column. */
+export enum OrderByRelationAggregateFunction {
+  /** Amount of items. */
+  Count = 'COUNT'
+}
+
+/** Aggregate functions when ordering by a relation that may specify a column. */
+export enum OrderByRelationWithColumnAggregateFunction {
+  /** Average. */
+  Avg = 'AVG',
+  /** Amount of items. */
+  Count = 'COUNT',
+  /** Maximum. */
+  Max = 'MAX',
+  /** Minimum. */
+  Min = 'MIN',
+  /** Sum. */
+  Sum = 'SUM'
+}
+
 export type OutputScript = {
   __typename?: 'OutputScript';
   output?: Maybe<Scalars['String']>;
@@ -352,6 +361,7 @@ export type PaginatorInfo = {
 export type Query = {
   __typename?: 'Query';
   GetConfigByDeviceType?: Maybe<Config>;
+  SyncServer: SyncServerData;
   device_types?: Maybe<DeviceTypePaginator>;
   devices?: Maybe<DevicePaginator>;
   getDevice: Device;
@@ -516,13 +526,54 @@ export type SoftwarePaginator = {
   paginatorInfo: PaginatorInfo;
 };
 
-/** The available directions for ordering a list of records. */
+/** Directions for ordering a list of records. */
 export enum SortOrder {
   /** Sort records in ascending order. */
   Asc = 'ASC',
   /** Sort records in descending order. */
   Desc = 'DESC'
 }
+
+export type SyncServerCommand = {
+  __typename?: 'SyncServerCommand';
+  input: Array<Maybe<SyncServerInput>>;
+  name: Scalars['String'];
+};
+
+export type SyncServerData = {
+  __typename?: 'SyncServerData';
+  devices: Array<Maybe<SyncServerDevice>>;
+};
+
+export type SyncServerDevice = {
+  __typename?: 'SyncServerDevice';
+  name: Scalars['String'];
+  output: Array<Maybe<SyncServerOutput>>;
+  software: Array<Maybe<SyncServerSoftware>>;
+  type: Scalars['String'];
+};
+
+export type SyncServerInput = {
+  __typename?: 'SyncServerInput';
+  name?: Maybe<Scalars['String']>;
+  placeholder?: Maybe<Scalars['String']>;
+  rules?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+};
+
+export type SyncServerOutput = {
+  __typename?: 'SyncServerOutput';
+  name: Scalars['String'];
+  title: Scalars['String'];
+};
+
+export type SyncServerSoftware = {
+  __typename?: 'SyncServerSoftware';
+  commands: Array<Maybe<SyncServerCommand>>;
+  has_schema?: Maybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+};
 
 /** Specify if you want to include or exclude trashed results from a query. */
 export enum Trashed {
@@ -535,7 +586,7 @@ export enum Trashed {
 }
 
 export type UpdateDevice = {
-  device_type_id: Scalars['ID'];
+  deviceType: Scalars['ID'];
   id: Scalars['ID'];
   name: Scalars['String'];
   port: Scalars['String'];
@@ -631,6 +682,20 @@ export type RunScriptMutationVariables = Exact<{
 
 
 export type RunScriptMutation = { __typename?: 'Mutation', RunScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
+
+export type StopScriptMutationVariables = Exact<{
+  input?: Maybe<RunScriptInput>;
+}>;
+
+
+export type StopScriptMutation = { __typename?: 'Mutation', StopScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
+
+export type ChangeScriptMutationVariables = Exact<{
+  input?: Maybe<RunScriptInput>;
+}>;
+
+
+export type ChangeScriptMutation = { __typename?: 'Mutation', ChangeScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -868,6 +933,72 @@ export function useRunScriptMutation(baseOptions?: Apollo.MutationHookOptions<Ru
 export type RunScriptMutationHookResult = ReturnType<typeof useRunScriptMutation>;
 export type RunScriptMutationResult = Apollo.MutationResult<RunScriptMutation>;
 export type RunScriptMutationOptions = Apollo.BaseMutationOptions<RunScriptMutation, RunScriptMutationVariables>;
+export const StopScriptDocument = gql`
+    mutation stopScript($input: RunScriptInput) {
+  StopScript(runScriptInput: $input) {
+    output
+  }
+}
+    `;
+export type StopScriptMutationFn = Apollo.MutationFunction<StopScriptMutation, StopScriptMutationVariables>;
+
+/**
+ * __useStopScriptMutation__
+ *
+ * To run a mutation, you first call `useStopScriptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopScriptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopScriptMutation, { data, loading, error }] = useStopScriptMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useStopScriptMutation(baseOptions?: Apollo.MutationHookOptions<StopScriptMutation, StopScriptMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StopScriptMutation, StopScriptMutationVariables>(StopScriptDocument, options);
+      }
+export type StopScriptMutationHookResult = ReturnType<typeof useStopScriptMutation>;
+export type StopScriptMutationResult = Apollo.MutationResult<StopScriptMutation>;
+export type StopScriptMutationOptions = Apollo.BaseMutationOptions<StopScriptMutation, StopScriptMutationVariables>;
+export const ChangeScriptDocument = gql`
+    mutation changeScript($input: RunScriptInput) {
+  ChangeScript(runScriptInput: $input) {
+    output
+  }
+}
+    `;
+export type ChangeScriptMutationFn = Apollo.MutationFunction<ChangeScriptMutation, ChangeScriptMutationVariables>;
+
+/**
+ * __useChangeScriptMutation__
+ *
+ * To run a mutation, you first call `useChangeScriptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeScriptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeScriptMutation, { data, loading, error }] = useChangeScriptMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangeScriptMutation(baseOptions?: Apollo.MutationHookOptions<ChangeScriptMutation, ChangeScriptMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeScriptMutation, ChangeScriptMutationVariables>(ChangeScriptDocument, options);
+      }
+export type ChangeScriptMutationHookResult = ReturnType<typeof useChangeScriptMutation>;
+export type ChangeScriptMutationResult = Apollo.MutationResult<ChangeScriptMutation>;
+export type ChangeScriptMutationOptions = Apollo.BaseMutationOptions<ChangeScriptMutation, ChangeScriptMutationVariables>;
 export const GetMeDocument = gql`
     query getMe {
   me {

@@ -4,45 +4,60 @@ import { Grid } from '@mui/material'
 
 import { gridSpacing } from 'assets/constants'
 import MainCard from 'ui-components/cards/MainCard'
-import Chart from 'react-apexcharts';
+import PlotlyChart from 'react-plotlyjs-ts';
 
 interface Props {
-    chartData: any,
+    chartData: any
     isLoading: boolean
+    simTime: number
+    setChartData: (data: any) => void
 }
 
-const DashboardChart = ({chartData, isLoading}: Props) => {
-    const [updatedData, setUpdatedData] = useState(chartData);
+const DashboardChart = ({chartData, isLoading, simTime, setChartData}: Props) => {
+    // const [updatedData, setUpdatedData] = useState(chartData);
     
-    useEffect(() => {
-        const newChartData = {
-            ...chartData.options
-        };
-        
-        if (!isLoading) {
-            ApexCharts.exec(`line-chart`, 'updateOptions', newChartData);  
+    const createChartObject = (name: string, data: []) => {
+        return {
+            name: name,
+            type: 'line',
+            x: Array.from(Array(simTime + 1).keys()),
+            y: data
         }
+    }
+    let test: any = []
 
+    useEffect(() => {
+        // const newChartData = {
+        //     ...chartData.options
+        // }
         //@ts-ignore
         window.Echo.channel('channel').listen(
             'DataBroadcaster',
             (e: any) => {
-                console.log(e);
+                
                 if (e.hello) {
-                    chartData.series[0].data = [...chartData.series[0].data, e.hello] as any
-                    ApexCharts.exec(`line-chart`, 'updateSeries', [...chartData.series], true);
-                } else {
-                    setUpdatedData(chartData)
-                }
+                    let newArray : any = []
+                    e.hello.map((item: any) => {
+                        let parsedData = item.data.map((itemData: string) => parseFloat(itemData))
+                        newArray = [
+                            ...newArray, 
+                            createChartObject(item.name, parsedData)
+                        ]
+                    })
+                    if (newArray[0].y.length - chartData[0].y.length >= 10) {
+                        test = e.hello
+                        setChartData(newArray)
+                    }
+                } 
             }
         )        
-    }, [isLoading, chartData]);
+    }, [test]);
 
     return (
         <MainCard>
             <Grid container spacing={gridSpacing}>
                 <Grid item xs={12}>
-                    <Chart {...updatedData} />
+                    <PlotlyChart data={chartData}/>
                 </Grid>
             </Grid>
         </MainCard>

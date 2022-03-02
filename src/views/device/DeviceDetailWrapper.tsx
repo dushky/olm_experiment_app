@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetDeviceByIdQuery, useGetSoftwareQuery, useGetDeviceTypesQuery } from 'generated/graphql'
+import { useGetDeviceByIdQuery, useGetSoftwareQuery, useGetDeviceTypesQuery, useUpdateDeviceMutation, UpdateDevice } from 'generated/graphql'
 import Page404 from 'views/pages/Page404'
 import Device from '.'
 import { useParams } from 'react-router'
@@ -18,8 +18,13 @@ const DeviceDetailWrapper = (props: Props) => {
         }
     })
 
-    const handleSubmit = () => {
-
+    const [mutation, {data: updateData, loading: updateLoading, error: updateError}] = useUpdateDeviceMutation()
+    const handleSubmit = (values: UpdateDevice) => {
+        mutation({
+            variables: {
+                input: values
+            }
+        })
     }
 
     const { data: softwareData, loading: softwareLoading, error: softwareError } = useGetSoftwareQuery()

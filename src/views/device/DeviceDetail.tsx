@@ -11,7 +11,7 @@ import { Update, gridSpacing } from "assets/constants"
 import MainCard from "ui-components/cards/MainCard"
 
 interface Props {
-    handleSubmit: () => void,
+    handleSubmit: (values: any) => void,
     device: DeviceDataFragment,
     software: SoftwareDataFragment[],
     deviceTypes: DeviceTypeDataFragment[]
@@ -20,6 +20,7 @@ interface Props {
 const DeviceDetail = ({device, handleSubmit, software, deviceTypes}: Props) => {
     const formik = useFormik({
         initialValues: {
+          id: device.id,
           name: device.name,
           port: device.port,
           deviceType: device.deviceType.id,
@@ -27,10 +28,7 @@ const DeviceDetail = ({device, handleSubmit, software, deviceTypes}: Props) => {
         },
         validationSchema: deviceTypeSchema,
         onSubmit: (values, {resetForm}) => {
-            console.log(values);
-            
-            // handleSubmit(values.name)
-            resetForm()
+            handleSubmit(values)
         }
     });
 

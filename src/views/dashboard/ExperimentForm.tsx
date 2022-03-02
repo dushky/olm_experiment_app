@@ -20,6 +20,7 @@ interface Props {
     selected: DeviceConfig
     setSelected: ({}: any) => any
     data: any
+    setsimTime: (time: number) => void
 }
 
 const ExperimentForm = (props: Props) => {
@@ -44,7 +45,7 @@ const ExperimentForm = (props: Props) => {
           user_function: ''
         },
         onSubmit: (values, {resetForm}) => {
-            resetForm()
+            props.setsimTime(parseInt(values.t_sim))
             let vals = ""
             Object.entries(values).map(([key, value], index) => {
                 if (value) {
@@ -55,13 +56,13 @@ const ExperimentForm = (props: Props) => {
                     }
                 } 
             })
-            console.log("DATA: ", data);
-            console.log("SELECTED COMMAND: ", selectedCommand);
-               
-            let command = data.filter((item: any, index: number) => index === selectedCommand)[0]
-            // console.log(command.scriptName);
             
-            handleSubmit(vals, selected, command.scriptName)
+            let command = data.filter((item: any, index: number) => index === selectedCommand)[0]
+            
+            
+            handleSubmit(vals, selected, command.scriptName).catch((e) => {
+                console.log(e)
+            })
         }
     });
 
@@ -187,7 +188,7 @@ const ExperimentForm = (props: Props) => {
                     {buildFormik()}
                     <Grid item xs={4} md={4} margin="auto">
                         <LoadingButton
-                            loading={buttonLoading}
+                            // loading={buttonLoading}
                             loadingPosition="start"
                             startIcon={<PlayCircleFilledOutlinedIcon />}
                             variant="contained"

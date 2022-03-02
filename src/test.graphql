@@ -17,6 +17,18 @@ mutation runScript($input: RunScriptInput) {
   }
 }
 
+mutation stopScript($input: RunScriptInput) {
+  StopScript(runScriptInput: $input) {
+    output
+  }
+}
+
+mutation changeScript($input: RunScriptInput) {
+  ChangeScript(runScriptInput: $input) {
+    output
+  }
+}
+
 query getMe {
   me {
     id,

@@ -11,11 +11,18 @@ import NotificationSection from './NotificationSection';
 
 // assets
 import { IconMenu2 } from '@tabler/icons';
+import { useGetMeQuery } from 'generated/graphql';
+import Page404 from 'views/pages/Page404'
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
 const Header = ({ handleLeftDrawerToggle }: any) => {
     const theme : any = useTheme();
+    const { data, loading, error } = useGetMeQuery()
+    
+    if (!data)
+        return <Page404/>
+
 
     return (
         <>
@@ -56,7 +63,7 @@ const Header = ({ handleLeftDrawerToggle }: any) => {
 
             {/* notification & profile */}
             <NotificationSection />
-            <ProfileSection />
+            <ProfileSection name={data!.me!.name!}/>
         </>
     );
 };

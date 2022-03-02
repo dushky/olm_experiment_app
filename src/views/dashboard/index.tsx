@@ -7,7 +7,7 @@ import { Grid } from '@mui/material'
 // constants
 import { gridSpacing } from 'assets/constants'
 import DashboardChart from './DashboardChart'
-import { useRunScriptMutation, useGetDevicesQuery, DeviceConfig } from "generated/graphql"
+import { useRunScriptMutation, useGetDevicesQuery, DeviceConfig, useStopScriptMutation, useChangeScriptMutation } from "generated/graphql"
 import ExperimentForm from './ExperimentForm'
 import Page404 from "views/pages/Page404"
 import ExperimentFormWrapper from './ExperimentFormWrapper'
@@ -17,8 +17,12 @@ const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(false);
     const { data: devicesData, loading: devicesLoading, error: devicesError } = useGetDevicesQuery()
+    const [simTime, setsimTime] = useState(4)
 
     const [mutation, { data, loading, error }] = useRunScriptMutation()
+    const [stopMutation, { data: stopData, loading: stopLoading, error: stopError }] = useStopScriptMutation()
+    const [changeMutation, {data: changeData, loading: changeLoading, error: changeError}] = useChangeScriptMutation()
+
     const series: {
         name: string,
         data: []
@@ -33,84 +37,56 @@ const Dashboard = () => {
 
     const handleSubmit = async (values: any, selectedDevice: DeviceConfig, selectedCommand: string) => {
         setButtonLoading(true)
-        await mutation({
-            variables: {
-                input: {
-                    inputParameter: values,
-                    scriptName: selectedCommand,
-                    device: selectedDevice
-                }
-            }
-        })
-        setButtonLoading(false)
-    }
-
-    const chartData = {
-        height: 480,
-        type: 'line',
-        options: {
-            chart: {
-                id: 'line-chart',
-                stacked: true,
-                toolbar: {
-                    show: true
-                }
-            },
-            responsive: [
-                {
-                    breakpoint: 767,
-                    options: {
-                        legend: {
-                            position: 'bottom',
-                            offsetX: -10,
-                            offsetY: 0
-                        }
+        if (selectedCommand === "start")
+            await mutation({
+                variables: {
+                    input: {
+                        inputParameter: values,
+                        scriptName: selectedCommand,
+                        device: selectedDevice
                     }
                 }
-            ],
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '50%'
+            })
+        else if(selectedCommand === 'change') {
+            await changeMutation({
+                variables: {
+                    input: {
+                        inputParameter: values,
+                        scriptName: selectedCommand,
+                        device: selectedDevice
+                    }
                 }
-            },
-            xaxis: {
-                type: 'category',
-                categories: [...Array.from({ length: 31 }, (v, i) => i.toString())]
-            },
-            legend: {
-                show: true,
-                fontSize: '14px',
-                fontFamily: `'Roboto', sans-serif`,
-                position: 'bottom',
-                offsetX: 20,
-                labels: {
-                    useSeriesColors: false
-                },
-                markers: {
-                    width: 16,
-                    height: 16,
-                    radius: 5
-                },
-                itemMargin: {
-                    horizontal: 15,
-                    vertical: 8
+            })
+        }
+        else
+            await stopMutation({
+                variables: {
+                    input: {
+                        inputParameter: values,
+                        scriptName: selectedCommand,
+                        device: selectedDevice
+                    }
                 }
+            })
+        setButtonLoading(false)
+    }
+    console.log(Array.from(Array(simTime + 1).keys()))
+    const [chartData, setChartData] = useState([
+        {
+            marker: {
+                color: 'rgb(16, 32, 77)'
             },
-            fill: {
-                type: 'solid'
-            },
-            dataLabels: {
-                enabled: false
-            },
-            grid: {
-                show: true
-            }
+            type: 'scatter',
+            x: Array.from(Array(simTime + 1).keys()),
+            y: [6, 2, 3, 2]
         },
-        series: [
-            series
-        ]
-    };
+        {
+            name: 'bar chart example',
+            type: 'line',
+            x: Array.from(Array(simTime + 1).keys()),
+            y: [6, 2, 3, 1],
+        }
+    ])
 
     if (!devicesData)
         return <Page404/>
@@ -120,13 +96,12 @@ const Dashboard = () => {
             <Grid item xs={12}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={6} md={6}>
-                        <DashboardChart chartData={chartData} isLoading={isLoading} />
+                        <DashboardChart chartData={chartData} isLoading={isLoading} simTime={simTime} setChartData={setChartData}/>
                     </Grid>
                     <Grid item xs={6} md={6}>
                         <MainCard>
-                            <ExperimentFormWrapper handleFormSubmit={handleSubmit} loading={buttonLoading} devices={devicesData!.devices!.data}/>
+                            <ExperimentFormWrapper handleFormSubmit={handleSubmit} loading={buttonLoading} devices={devicesData!.devices!.data} setsimTime={setsimTime}/>
                         </MainCard>
-                        {/* TODO: Component which render form */}
                     </Grid>
                 </Grid>
             </Grid>

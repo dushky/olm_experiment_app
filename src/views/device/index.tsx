@@ -148,7 +148,6 @@ const Device = ({device, software, deviceTypes, loading}: Props) => {
             field: "name",
             flex: 1,
             type: "string",
-            editable: true,
             valueFormatter: (value) => value.value,
             renderHeader: (params: any) => {
                 return <span>Name</span>
@@ -158,7 +157,6 @@ const Device = ({device, software, deviceTypes, loading}: Props) => {
             field: "port",
             flex: 1,
             type: "string",
-            editable: true,
             valueFormatter: (value) => value.value,
             renderHeader: (params: any) => {
                 return <span>Port</span>
@@ -168,7 +166,6 @@ const Device = ({device, software, deviceTypes, loading}: Props) => {
             field: "deviceType",
             flex: 1,
             type: "string",
-            editable: true,
             valueFormatter: (value) => value.value,
             renderHeader: (params: any) => {
                 return <span>Device Type</span>
@@ -202,7 +199,7 @@ const Device = ({device, software, deviceTypes, loading}: Props) => {
                         id: "",
                         name: "",
                         port: "",
-                        device_type_id: "",
+                        deviceType: "",
                         software: softwareIds
                     }
                 }
@@ -212,19 +209,19 @@ const Device = ({device, software, deviceTypes, loading}: Props) => {
         }
     }
 
-    const handleDropDownEdit = async (params: any, softwareIds: string[]) => {
-        await updateMutation({
-            variables: {
-                input: {
-                    id: params.id,
-                    name: params.name,
-                    port: params.port,
-                    device_type_id: params.device_type_id,
-                    software: softwareIds
-                }
-            }
-        })
-    }
+    // const handleDropDownEdit = async (params: any, softwareIds: string[]) => {
+    //     await updateMutation({
+    //         variables: {
+    //             input: {
+    //                 id: params.id,
+    //                 name: params.name,
+    //                 port: params.port,
+    //                 device_type_id: params.device_type_id,
+    //                 software: softwareIds
+    //             }
+    //         }
+    //     })
+    // }
 
 
     return (
