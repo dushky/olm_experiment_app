@@ -16,15 +16,18 @@ import Echo from 'laravel-echo'
 //@ts-ignore
 window.Pusher = require('pusher-js')
 
+// process.env.REACT_APP_PUSHER_ENV_KEY
 //@ts-ignore
 window.Echo = new Echo({
   broadcaster: 'pusher',
-  key: process.env.REACT_APP_PUSHER_ENV_KEY,
-  cluster: process.env.REACT_APP_PUSHER_ENV_CLUSTER,
-  wsHost: process.env.REACT_APP_PUSHER_HOST,
+  key: 'local',
+  cluster: 'local',
+  wsHost: 'api-exp01.iolab.sk',
   wsPort: 6001,
-  forceTLS: false,
-  disableStats: true
+  wssPort: 6001,
+  forceTLS: true,
+  disableStats: true,
+  // enabledTransports: ['ws', 'wss']
 })
 
 const authLink = setContext((_, { headers }) => {
@@ -40,13 +43,12 @@ const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     new HttpLink({
-      uri: 'http://olm-api.test/graphql',
-      credentials: 'include',
+      uri: 'https://api-exp01.iolab.sk/graphql',
+      // credentials: 'include',
     })
   ]),
   cache: new InMemoryCache()
 });
-
 
 
 ReactDOM.render(

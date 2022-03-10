@@ -18,9 +18,13 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type AccessToken = {
-  __typename?: 'AccessToken';
-  token: Scalars['String'];
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  access_token?: Maybe<Scalars['String']>;
+  expires_in?: Maybe<Scalars['Int']>;
+  refresh_token?: Maybe<Scalars['String']>;
+  token_type?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
 };
 
 export type Config = {
@@ -116,47 +120,26 @@ export type DeviceTypePaginator = {
   paginatorInfo: PaginatorInfo;
 };
 
-export type EmailVerificationResponse = {
-  __typename?: 'EmailVerificationResponse';
-  status: EmailVerificationStatus;
-};
-
-export enum EmailVerificationStatus {
-  /** VERIFIED */
-  Verified = 'VERIFIED'
-}
-
 export type ForgotPasswordInput = {
   email: Scalars['String'];
-  reset_password_url?: Maybe<ResetPasswordUrlInput>;
 };
 
 export type ForgotPasswordResponse = {
   __typename?: 'ForgotPasswordResponse';
   message?: Maybe<Scalars['String']>;
-  status: ForgotPasswordStatus;
+  status: Scalars['String'];
 };
 
-export enum ForgotPasswordStatus {
-  /** EMAIL_SENT */
-  EmailSent = 'EMAIL_SENT'
-}
-
 export type LoginInput = {
-  email: Scalars['String'];
   password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type LogoutResponse = {
   __typename?: 'LogoutResponse';
-  message: Scalars['String'];
-  status: LogoutStatus;
+  message?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
 };
-
-export enum LogoutStatus {
-  /** TOKEN_REVOKED */
-  TokenRevoked = 'TOKEN_REVOKED'
-}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -167,20 +150,21 @@ export type Mutation = {
   createDeviceType: DeviceType;
   createSoftware: Software;
   forgotPassword: ForgotPasswordResponse;
-  login: AccessToken;
+  login: AuthPayload;
   logout: LogoutResponse;
+  refreshToken: RefreshTokenPayload;
   register: RegisterResponse;
   removeDevice: Device;
   removeDeviceType: DeviceType;
   removeSoftware: Software;
-  resendEmailVerification: ResendEmailVerificationResponse;
-  resetPassword: ResetPasswordResponse;
+  socialLogin: AuthPayload;
   updateDevice: Device;
   updateDeviceType: DeviceType;
+  updateForgottenPassword: ForgotPasswordResponse;
   updatePassword: UpdatePasswordResponse;
   updateSoftware: Software;
   updateUser?: Maybe<User>;
-  verifyEmail: EmailVerificationResponse;
+  verifyEmail: AuthPayload;
 };
 
 
@@ -224,6 +208,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationRefreshTokenArgs = {
+  input?: Maybe<RefreshTokenInput>;
+};
+
+
 export type MutationRegisterArgs = {
   input?: Maybe<RegisterInput>;
 };
@@ -244,13 +233,8 @@ export type MutationRemoveSoftwareArgs = {
 };
 
 
-export type MutationResendEmailVerificationArgs = {
-  input: ResendEmailVerificationInput;
-};
-
-
-export type MutationResetPasswordArgs = {
-  input: ResetPasswordInput;
+export type MutationSocialLoginArgs = {
+  input: SocialLoginInput;
 };
 
 
@@ -264,8 +248,13 @@ export type MutationUpdateDeviceTypeArgs = {
 };
 
 
+export type MutationUpdateForgottenPasswordArgs = {
+  input?: Maybe<NewPasswordWithCodeInput>;
+};
+
+
 export type MutationUpdatePasswordArgs = {
-  input: UpdatePasswordInput;
+  input: UpdatePassword;
 };
 
 
@@ -281,6 +270,13 @@ export type MutationUpdateUserArgs = {
 
 export type MutationVerifyEmailArgs = {
   input: VerifyEmailInput;
+};
+
+export type NewPasswordWithCodeInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  password_confirmation: Scalars['String'];
+  token: Scalars['String'];
 };
 
 /** Allows ordering a list of records. */
@@ -410,6 +406,18 @@ export type QueryUsersArgs = {
   page?: Maybe<Scalars['Int']>;
 };
 
+export type RefreshTokenInput = {
+  refresh_token?: Maybe<Scalars['String']>;
+};
+
+export type RefreshTokenPayload = {
+  __typename?: 'RefreshTokenPayload';
+  access_token: Scalars['String'];
+  expires_in: Scalars['Int'];
+  refresh_token: Scalars['String'];
+  token_type: Scalars['String'];
+};
+
 export type RegisterInput = {
   email: Scalars['String'];
   name: Scalars['String'];
@@ -419,61 +427,18 @@ export type RegisterInput = {
 
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
-  status: RegisterStatus;
-  token?: Maybe<Scalars['String']>;
+  status: RegisterStatuses;
+  tokens?: Maybe<AuthPayload>;
 };
 
-export enum RegisterStatus {
-  /** MUST_VERIFY_EMAIL */
+export enum RegisterStatuses {
   MustVerifyEmail = 'MUST_VERIFY_EMAIL',
-  /** SUCCESS */
   Success = 'SUCCESS'
 }
 
-export type ResendEmailVerificationInput = {
-  email: Scalars['String'];
-};
-
-export type ResendEmailVerificationResponse = {
-  __typename?: 'ResendEmailVerificationResponse';
-  status: ResendEmailVerificationStatus;
-};
-
-export enum ResendEmailVerificationStatus {
-  /** EMAIL_SENT */
-  EmailSent = 'EMAIL_SENT'
-}
-
-export type ResetPasswordInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  password_confirmation: Scalars['String'];
-  token: Scalars['String'];
-};
-
-export type ResetPasswordResponse = {
-  __typename?: 'ResetPasswordResponse';
-  message?: Maybe<Scalars['String']>;
-  status: ResetPasswordStatus;
-};
-
-export enum ResetPasswordStatus {
-  /** PASSWORD_RESET */
-  PasswordReset = 'PASSWORD_RESET'
-}
-
-/**
- * The url used to reset the password.
- * Use the `__EMAIL__` and `__TOKEN__` placeholders to inject the reset password email and token.
- *
- * e.g; `https://my-front-end.com?reset-password?email=__EMAIL__&token=__TOKEN__`
- */
-export type ResetPasswordUrlInput = {
-  url: Scalars['String'];
-};
-
 export type RunScriptInput = {
   device?: Maybe<DeviceConfig>;
+  fileName?: Maybe<Scalars['String']>;
   inputParameter?: Maybe<Scalars['String']>;
   scriptName?: Maybe<Scalars['String']>;
 };
@@ -503,10 +468,17 @@ export type SimplePaginatorInfo = {
   currentPage: Scalars['Int'];
   /** Index of the first item in the current page. */
   firstItem?: Maybe<Scalars['Int']>;
+  /** Are there more pages after this one? */
+  hasMorePages: Scalars['Boolean'];
   /** Index of the last item in the current page. */
   lastItem?: Maybe<Scalars['Int']>;
   /** Number of items per page. */
   perPage: Scalars['Int'];
+};
+
+export type SocialLoginInput = {
+  provider: Scalars['String'];
+  token: Scalars['String'];
 };
 
 export type Software = {
@@ -598,21 +570,17 @@ export type UpdateDeviceType = {
   name: Scalars['String'];
 };
 
-export type UpdatePasswordInput = {
-  current_password: Scalars['String'];
+export type UpdatePassword = {
+  old_password: Scalars['String'];
   password: Scalars['String'];
   password_confirmation: Scalars['String'];
 };
 
 export type UpdatePasswordResponse = {
   __typename?: 'UpdatePasswordResponse';
-  status: UpdatePasswordStatus;
+  message?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
 };
-
-export enum UpdatePasswordStatus {
-  /** PASSWORD_UPDATED */
-  PasswordUpdated = 'PASSWORD_UPDATED'
-}
 
 export type UpdateSoftware = {
   id: Scalars['ID'];
@@ -642,26 +610,8 @@ export type UserPaginator = {
   paginatorInfo: PaginatorInfo;
 };
 
-/**
- * The url used to verify the email address.
- * Use __ID__ and __HASH__ to inject values.
- *
- * e.g; `https://my-front-end.com/verify-email?id=__ID__&hash=__HASH__`
- *
- * If the API uses signed email verification urls
- * you must also use __EXPIRES__ and __SIGNATURE__
- *
- * e.g; `https://my-front-end.com/verify-email?id=__ID__&hash=__HASH__&expires=__EXPIRES__&signature=__SIGNATURE__`
- */
-export type VerificationUrlInput = {
-  url: Scalars['String'];
-};
-
 export type VerifyEmailInput = {
-  expires?: Maybe<Scalars['Int']>;
-  hash: Scalars['String'];
-  id: Scalars['ID'];
-  signature?: Maybe<Scalars['String']>;
+  token: Scalars['String'];
 };
 
 export type LoginMutationVariables = Exact<{
@@ -669,12 +619,12 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AccessToken', token: string } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthPayload', access_token?: string | null | undefined, user?: { __typename?: 'User', name?: string | null | undefined, email?: string | null | undefined, id?: string | null | undefined } | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutResponse', status: LogoutStatus, message: string } };
+export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutResponse', status: string, message?: string | null | undefined } };
 
 export type RunScriptMutationVariables = Exact<{
   input?: Maybe<RunScriptInput>;
@@ -837,7 +787,12 @@ ${SoftwareDataFragmentDoc}`;
 export const LoginDocument = gql`
     mutation login($login: LoginInput) {
   login(input: $login) {
-    token
+    access_token
+    user {
+      name
+      email
+      id
+    }
   }
 }
     `;

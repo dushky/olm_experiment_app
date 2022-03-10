@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useReducer } from 'react'
 import { useFormik } from 'formik'
 
 
@@ -11,6 +11,7 @@ import { gridSpacing, Update } from 'assets/constants'
 import CellDropdown from 'views/device/CellDropdown'
 
 import { buildForm } from "./ExperimentFormBuilder"
+import { SimulationTimeContext } from 'App'
 
 
 interface Props {
@@ -20,7 +21,8 @@ interface Props {
     selected: DeviceConfig
     setSelected: ({}: any) => any
     data: any
-    setsimTime: (time: number) => void
+    setSimTime: (time: number) => void
+    simTime: number
 }
 
 const ExperimentForm = (props: Props) => {
@@ -30,9 +32,13 @@ const ExperimentForm = (props: Props) => {
         devices, 
         selected, 
         setSelected,
-        data 
+        data,
+        setSimTime,
+        simTime
     } = props
+    const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
+    // const { simTime, setSimTime} = useContext(SimulationTimeContext)
     const formik = useFormik({
         initialValues: {
           reg_request: '',
@@ -44,8 +50,11 @@ const ExperimentForm = (props: Props) => {
           uploaded_file: '',
           user_function: ''
         },
-        onSubmit: (values, {resetForm}) => {
-            props.setsimTime(parseInt(values.t_sim))
+        onSubmit: async (values, {resetForm}) => {
+            console.log("FROM FORM: ", parseInt(values.t_sim))
+            setSimTime(parseInt(values.t_sim))
+            console.log(simTime)
+            // props.setsimTime(parseInt(values.t_sim))
             let vals = ""
             Object.entries(values).map(([key, value], index) => {
                 if (value) {
@@ -59,10 +68,7 @@ const ExperimentForm = (props: Props) => {
             
             let command = data.filter((item: any, index: number) => index === selectedCommand)[0]
             
-            
-            handleSubmit(vals, selected, command.scriptName).catch((e) => {
-                console.log(e)
-            })
+            await handleSubmit(vals, selected, command.scriptName)
         }
     });
 

@@ -1,6 +1,11 @@
 mutation login($login:LoginInput) {
   login(input: $login) {
-    token
+    access_token,
+    user {
+      name,
+      email,
+      id
+    }
   }
 }
 

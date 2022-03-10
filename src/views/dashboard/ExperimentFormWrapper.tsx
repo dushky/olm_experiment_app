@@ -11,10 +11,11 @@ interface Props {
     handleFormSubmit: (values: any, selectedDevice: DeviceConfig, selectedCommand: string) => Promise<void>
     loading: boolean
     devices: DeviceDataFragment[]
-    setsimTime: (time: number) => void
+    setSimTime: (time: number) => void
+    simTime: number
 }
 
-const ExperimentFormWrapper = ({handleFormSubmit, loading, devices, setsimTime}: Props) => {
+const ExperimentFormWrapper = ({handleFormSubmit, loading, devices, setSimTime, simTime}: Props) => {
     const [selected, setSelected] = useState<DeviceConfig>({
         deviceName: "" as any,
         software: "" as any,
@@ -31,7 +32,7 @@ const ExperimentFormWrapper = ({handleFormSubmit, loading, devices, setsimTime}:
     })
 
     return (
-        <ExperimentForm handleFormSubmit={handleFormSubmit} loading={loading} devices={devices} selected={selected} setSelected={setSelected} data={data?.GetConfigByDeviceType!.items} setsimTime={setsimTime}/>
+        <ExperimentForm handleFormSubmit={handleFormSubmit} loading={loading} devices={devices} selected={selected} setSelected={setSelected} data={data?.GetConfigByDeviceType!.items} setSimTime={setSimTime} simTime={simTime}/>
     )
 }
 

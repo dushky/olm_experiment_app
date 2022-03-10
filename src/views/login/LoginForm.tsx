@@ -31,16 +31,16 @@ interface Props {
 
 const LoginForm = ({user, handleSubmitForm, isSubmitting}: Props) => {
     const theme : any = useTheme()
-    const [checked, setChecked] = useState(true)
+    // const [checked, setChecked] = useState(true)
     const [showPassword, setShowPassword] = useState<boolean>(false)
 
     const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
+        setShowPassword(!showPassword)
+    }
 
     const handleMouseDownPassword = (e: any) => {
         e.preventDefault();
-    };
+    }
 
     return (
         <Formik
@@ -49,14 +49,14 @@ const LoginForm = ({user, handleSubmitForm, isSubmitting}: Props) => {
             onSubmit={(values: LoginInput) => handleSubmitForm(values)}
         >
             {({ errors, handleBlur, handleChange, handleSubmit, touched, values }: any) => (
-                <form noValidate onSubmit={handleSubmit} >
+                <form onSubmit={handleSubmit} >
                     <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
                         <InputLabel htmlFor="outlined-adornment-email-login">Email Address</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-email-login"
                             type="email"
                             value={values.email}
-                            name="email"
+                            name="username"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             label="Email Address / Username"
@@ -104,22 +104,6 @@ const LoginForm = ({user, handleSubmitForm, isSubmitting}: Props) => {
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={checked}
-                                    onChange={(event) => setChecked(event.target.checked)}
-                                    name="checked"
-                                    color="primary"
-                                />
-                            }
-                            label="Remember me"
-                        />
-                        <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }}>
-                            Forgot Password?
-                        </Typography>
-                    </Stack>
                     {errors.submit && (
                         <Box sx={{ mt: 3 }}>
                             <FormHelperText error>{errors.submit}</FormHelperText>
