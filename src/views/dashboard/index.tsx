@@ -7,22 +7,26 @@ import { Grid } from '@mui/material'
 // constants
 import { gridSpacing } from 'assets/constants'
 import DashboardChart from './DashboardChart'
-import { useRunScriptMutation, useGetDevicesQuery, DeviceConfig, useStopScriptMutation, useChangeScriptMutation } from "generated/graphql"
+import { useRunScriptMutation, useGetDevicesQuery, DeviceConfig, useStopScriptMutation, useChangeScriptMutation, useGetExperimentDetailsQuery } from "generated/graphql"
 import Page404 from "views/pages/Page404"
 import ExperimentFormWrapper from './ExperimentFormWrapper'
 import MainCard from 'ui-components/cards/MainCard'
-import { GraphContext, SimulationTimeContext } from 'App'
+
+interface MyWindow extends Window {
+    experimentId: string | undefined
+}
+
+declare var window: MyWindow;
 
 const Dashboard = () => {
-    const { simTime, setSimTime } = useContext(SimulationTimeContext)
-    const { chartData, setChartData } = useContext(GraphContext) 
     const [isLoading, setLoading] = useState(true);
     const [buttonLoading, setButtonLoading] = useState(false);
     const { data: devicesData, loading: devicesLoading, error: devicesError } = useGetDevicesQuery()
 
-    const [mutation, { data, loading, error }] = useRunScriptMutation()
-    const [stopMutation, { data: stopData, loading: stopLoading, error: stopError }] = useStopScriptMutation()
-    const [changeMutation, {data: changeData, loading: changeLoading, error: changeError}] = useChangeScriptMutation()
+
+    const [mutation,] = useRunScriptMutation()
+    const [stopMutation,] = useStopScriptMutation()
+    const [changeMutation,] = useChangeScriptMutation()
 
     useEffect(() => {
         setLoading(false);        
@@ -36,9 +40,12 @@ const Dashboard = () => {
                     input: {
                         inputParameter: values,
                         scriptName: selectedCommand,
+                        fileName: "",
                         device: selectedDevice
                     }
                 }
+            }).then((values) => {
+                window.experimentId = values?.data?.RunScript?.experimentID
             })
         else if(selectedCommand === 'change') {
             await changeMutation({
@@ -46,7 +53,8 @@ const Dashboard = () => {
                     input: {
                         inputParameter: values,
                         scriptName: selectedCommand,
-                        device: selectedDevice
+                        device: selectedDevice,
+                        experimentID: window.experimentId
                     }
                 }
             })
@@ -57,26 +65,28 @@ const Dashboard = () => {
                     input: {
                         inputParameter: values,
                         scriptName: selectedCommand,
-                        device: selectedDevice
+                        device: selectedDevice,
+                        experimentID: window.experimentId
                     }
                 }
             })
         setButtonLoading(false)
     }
 
-    if (!devicesData)
+    if (!devicesData) {
         return <Page404/>
+    }
 
     return (
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={6} md={6}>
-                        <DashboardChart chartData={chartData} isLoading={isLoading} setChartData={setChartData} simTime={simTime}/>
+                        <DashboardChart />
                     </Grid>
                     <Grid item xs={6} md={6}>
                         <MainCard>
-                            <ExperimentFormWrapper handleFormSubmit={handleSubmit} loading={buttonLoading} devices={devicesData!.devices!.data} setSimTime={setSimTime} simTime={simTime}/>
+                            <ExperimentFormWrapper handleFormSubmit={handleSubmit} devices={devicesData!.devices!.data}/>
                         </MainCard>
                     </Grid>
                 </Grid>

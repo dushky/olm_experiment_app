@@ -18,6 +18,12 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type ArrayOfData = {
+  __typename?: 'ArrayOfData';
+  data: Array<Maybe<Scalars['Float']>>;
+  name: Scalars['String'];
+};
+
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   access_token?: Maybe<Scalars['String']>;
@@ -119,6 +125,22 @@ export type DeviceTypePaginator = {
   /** Pagination information about the list of items. */
   paginatorInfo: PaginatorInfo;
 };
+
+export type ExperimentDetail = {
+  __typename?: 'ExperimentDetail';
+  status?: Maybe<ExperimentStatus>;
+  url?: Maybe<Scalars['String']>;
+  values: Array<Maybe<ArrayOfData>>;
+};
+
+export enum ExperimentStatus {
+  /** failed */
+  Failed = 'failed',
+  /** finished */
+  Finished = 'finished',
+  /** running */
+  Running = 'running'
+}
 
 export type ForgotPasswordInput = {
   email: Scalars['String'];
@@ -309,7 +331,9 @@ export enum OrderByRelationWithColumnAggregateFunction {
 
 export type OutputScript = {
   __typename?: 'OutputScript';
-  output?: Maybe<Scalars['String']>;
+  errorMessage: Scalars['String'];
+  experimentID: Scalars['ID'];
+  status?: Maybe<Scalars['String']>;
 };
 
 /** Information about pagination using a Relay style cursor connection. */
@@ -360,6 +384,7 @@ export type Query = {
   SyncServer: SyncServerData;
   device_types?: Maybe<DeviceTypePaginator>;
   devices?: Maybe<DevicePaginator>;
+  experimentDetails?: Maybe<ExperimentDetail>;
   getDevice: Device;
   me?: Maybe<User>;
   software?: Maybe<SoftwarePaginator>;
@@ -382,6 +407,11 @@ export type QueryDevice_TypesArgs = {
 export type QueryDevicesArgs = {
   first?: Maybe<Scalars['Int']>;
   page?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryExperimentDetailsArgs = {
+  experimentID?: Maybe<Scalars['ID']>;
 };
 
 
@@ -438,6 +468,7 @@ export enum RegisterStatuses {
 
 export type RunScriptInput = {
   device?: Maybe<DeviceConfig>;
+  experimentID?: Maybe<Scalars['ID']>;
   fileName?: Maybe<Scalars['String']>;
   inputParameter?: Maybe<Scalars['String']>;
   scriptName?: Maybe<Scalars['String']>;
@@ -519,6 +550,7 @@ export type SyncServerData = {
 
 export type SyncServerDevice = {
   __typename?: 'SyncServerDevice';
+  id: Scalars['ID'];
   name: Scalars['String'];
   output: Array<Maybe<SyncServerOutput>>;
   software: Array<Maybe<SyncServerSoftware>>;
@@ -631,26 +663,33 @@ export type RunScriptMutationVariables = Exact<{
 }>;
 
 
-export type RunScriptMutation = { __typename?: 'Mutation', RunScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
+export type RunScriptMutation = { __typename?: 'Mutation', RunScript?: { __typename?: 'OutputScript', status?: string | null | undefined, experimentID: string, errorMessage: string } | null | undefined };
 
 export type StopScriptMutationVariables = Exact<{
   input?: Maybe<RunScriptInput>;
 }>;
 
 
-export type StopScriptMutation = { __typename?: 'Mutation', StopScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
+export type StopScriptMutation = { __typename?: 'Mutation', StopScript?: { __typename?: 'OutputScript', status?: string | null | undefined, errorMessage: string } | null | undefined };
 
 export type ChangeScriptMutationVariables = Exact<{
   input?: Maybe<RunScriptInput>;
 }>;
 
 
-export type ChangeScriptMutation = { __typename?: 'Mutation', ChangeScript?: { __typename?: 'OutputScript', output?: string | null | undefined } | null | undefined };
+export type ChangeScriptMutation = { __typename?: 'Mutation', ChangeScript?: { __typename?: 'OutputScript', status?: string | null | undefined, errorMessage: string } | null | undefined };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id?: string | null | undefined, name?: string | null | undefined, email?: string | null | undefined } | null | undefined };
+
+export type GetExperimentDetailsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetExperimentDetailsQuery = { __typename?: 'Query', experimentDetails?: { __typename?: 'ExperimentDetail', url?: string | null | undefined, status?: ExperimentStatus | null | undefined, values: Array<{ __typename?: 'ArrayOfData', name: string, data: Array<number | null | undefined> } | null | undefined> } | null | undefined };
 
 export type GetUserQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -858,7 +897,9 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RunScriptDocument = gql`
     mutation runScript($input: RunScriptInput) {
   RunScript(runScriptInput: $input) {
-    output
+    status
+    experimentID
+    errorMessage
   }
 }
     `;
@@ -891,7 +932,8 @@ export type RunScriptMutationOptions = Apollo.BaseMutationOptions<RunScriptMutat
 export const StopScriptDocument = gql`
     mutation stopScript($input: RunScriptInput) {
   StopScript(runScriptInput: $input) {
-    output
+    status
+    errorMessage
   }
 }
     `;
@@ -924,7 +966,8 @@ export type StopScriptMutationOptions = Apollo.BaseMutationOptions<StopScriptMut
 export const ChangeScriptDocument = gql`
     mutation changeScript($input: RunScriptInput) {
   ChangeScript(runScriptInput: $input) {
-    output
+    status
+    errorMessage
   }
 }
     `;
@@ -990,6 +1033,46 @@ export function useGetMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetM
 export type GetMeQueryHookResult = ReturnType<typeof useGetMeQuery>;
 export type GetMeLazyQueryHookResult = ReturnType<typeof useGetMeLazyQuery>;
 export type GetMeQueryResult = Apollo.QueryResult<GetMeQuery, GetMeQueryVariables>;
+export const GetExperimentDetailsDocument = gql`
+    query getExperimentDetails($id: ID!) {
+  experimentDetails(experimentID: $id) {
+    url
+    status
+    values {
+      name
+      data
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetExperimentDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetExperimentDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetExperimentDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetExperimentDetailsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetExperimentDetailsQuery(baseOptions: Apollo.QueryHookOptions<GetExperimentDetailsQuery, GetExperimentDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetExperimentDetailsQuery, GetExperimentDetailsQueryVariables>(GetExperimentDetailsDocument, options);
+      }
+export function useGetExperimentDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetExperimentDetailsQuery, GetExperimentDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetExperimentDetailsQuery, GetExperimentDetailsQueryVariables>(GetExperimentDetailsDocument, options);
+        }
+export type GetExperimentDetailsQueryHookResult = ReturnType<typeof useGetExperimentDetailsQuery>;
+export type GetExperimentDetailsLazyQueryHookResult = ReturnType<typeof useGetExperimentDetailsLazyQuery>;
+export type GetExperimentDetailsQueryResult = Apollo.QueryResult<GetExperimentDetailsQuery, GetExperimentDetailsQueryVariables>;
 export const GetUserDocument = gql`
     query getUser($id: ID!) {
   user(id: $id) {

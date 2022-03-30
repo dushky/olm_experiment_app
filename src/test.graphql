@@ -18,19 +18,23 @@ mutation logout {
 
 mutation runScript($input: RunScriptInput) {
   RunScript(runScriptInput: $input) {
-    output
+    status,
+    experimentID,
+    errorMessage
   }
 }
 
 mutation stopScript($input: RunScriptInput) {
   StopScript(runScriptInput: $input) {
-    output
+    status,
+    errorMessage
   }
 }
 
 mutation changeScript($input: RunScriptInput) {
   ChangeScript(runScriptInput: $input) {
-    output
+    status,
+    errorMessage
   }
 }
 
@@ -39,6 +43,17 @@ query getMe {
     id,
     name,
     email
+  }
+}
+
+query getExperimentDetails($id: ID!) {
+  experimentDetails(experimentID: $id) {
+    url,
+    status,
+    values {
+      name,
+      data
+    }
   }
 }
 

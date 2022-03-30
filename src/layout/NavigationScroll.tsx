@@ -4,9 +4,7 @@ import { useLocation } from 'react-router-dom'
 
 const NavigationScroll = ({ children } : any) => {
     const location = useLocation()
-    const { pathName }: any = location
-    console.log(pathName);
-    
+    const { pathName }: any = location    
 
     useEffect(() => {
         window.scrollTo({

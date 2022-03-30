@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-    Avatar,
     Box,
     Button,
-    ButtonBase,
     CardActions,
     Chip,
     ClickAwayListener,
@@ -65,9 +63,9 @@ const NotificationSection = () => {
      * */
     const anchorRef = useRef(null);
 
-    const handleToggle = () => {
-        setOpen((prevOpen) => !prevOpen);
-    };
+    // const handleToggle = () => {
+    //     setOpen((prevOpen) => !prevOpen);
+    // };
 
     const handleClose = (event: any) => {
         //@ts-ignore

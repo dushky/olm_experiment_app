@@ -11,34 +11,24 @@ import { gridSpacing, Update } from 'assets/constants'
 import CellDropdown from 'views/device/CellDropdown'
 
 import { buildForm } from "./ExperimentFormBuilder"
-import { SimulationTimeContext } from 'App'
 
 
 interface Props {
     handleFormSubmit: (values: any, configInput: DeviceConfig, selectedCommand: string) => Promise<void>
-    loading: boolean
     devices: DeviceDataFragment[]
     selected: DeviceConfig
     setSelected: ({}: any) => any
     data: any
-    setSimTime: (time: number) => void
-    simTime: number
 }
 
 const ExperimentForm = (props: Props) => {
     const { 
         handleFormSubmit: handleSubmit, 
-        loading: buttonLoading, 
         devices, 
         selected, 
         setSelected,
-        data,
-        setSimTime,
-        simTime
+        data
     } = props
-    const [, forceUpdate] = useReducer((x) => x + 1, 0)
-
-    // const { simTime, setSimTime} = useContext(SimulationTimeContext)
     const formik = useFormik({
         initialValues: {
           reg_request: '',
@@ -50,11 +40,7 @@ const ExperimentForm = (props: Props) => {
           uploaded_file: '',
           user_function: ''
         },
-        onSubmit: async (values, {resetForm}) => {
-            console.log("FROM FORM: ", parseInt(values.t_sim))
-            setSimTime(parseInt(values.t_sim))
-            console.log(simTime)
-            // props.setsimTime(parseInt(values.t_sim))
+        onSubmit: async (values) => {
             let vals = ""
             Object.entries(values).map(([key, value], index) => {
                 if (value) {
@@ -132,8 +118,8 @@ const ExperimentForm = (props: Props) => {
 
     const buildFormik = () => {
         if (data && data[selectedCommand]) 
-            return data[selectedCommand].items.map((item: any) => {
-                return buildForm(item, formik)
+            return data[selectedCommand].items.map((item: any, index: number) => {
+                return buildForm(item, formik, index)
             })
     }
 
@@ -194,7 +180,6 @@ const ExperimentForm = (props: Props) => {
                     {buildFormik()}
                     <Grid item xs={4} md={4} margin="auto">
                         <LoadingButton
-                            // loading={buttonLoading}
                             loadingPosition="start"
                             startIcon={<PlayCircleFilledOutlinedIcon />}
                             variant="contained"

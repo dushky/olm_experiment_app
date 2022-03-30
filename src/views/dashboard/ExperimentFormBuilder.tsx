@@ -2,9 +2,9 @@ import { Grid, TextField, Button, InputLabel } from '@mui/material'
 import { FormikHandlers } from 'formik'
 import { ConfigItem } from 'generated/graphql'
 
-const buildTextField = (params: ConfigItem, formik: any) => {
+const buildTextField = (params: ConfigItem, formik: any, index:number) => {
     return (
-        <Grid item xs={4} md={4}>
+        <Grid item xs={4} md={4} key={index}>
             <TextField
                 fullWidth
                 id={params.name!}
@@ -12,7 +12,7 @@ const buildTextField = (params: ConfigItem, formik: any) => {
                 label={params.title}
                 placeholder={params.placeholder!}
                 margin='dense'
-                value={formik.values[params.name!]}
+                value={formik.values[params.name!] ?? ""}
                 onChange={formik.handleChange}
                 helperText={params.title}
             />
@@ -50,10 +50,10 @@ const buildFileField = (params: any, formik: any) => {
 }
 
 
-export const buildForm = (param: ConfigItem, formik: any) => {
+export const buildForm = (param: ConfigItem, formik: any, index: number) => {
     switch(param.type) {
         case("text"):
-            return buildTextField(param, formik)
+            return buildTextField(param, formik, index)
         case("file"):
             return buildFileField(param, formik)
         case("select"):

@@ -1,30 +1,26 @@
-import React, { useContext, useEffect, useState, useReducer } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import { Grid } from '@mui/material'
 
 import { gridSpacing } from 'assets/constants'
 import MainCard from 'ui-components/cards/MainCard'
 import PlotlyChart from 'react-plotlyjs-ts'
-import moment from 'moment'
-// import { SimulationTimeContext } from 'App'
+import { GraphContext } from 'App'
+
 
 interface Props {
-    chartData: any
-    isLoading: boolean
-    setChartData: (data: any) => void
-    simTime: number
 }
 
-let lastUpdate = moment()
-let test : any= []
-const DashboardChart = ({chartData, isLoading, setChartData, simTime}: Props) => {
-    // const { simTime, setSimTime } = useContext(SimulationTimeContext)
-    const createChartObject = (name: string, data: any) => {
+let time : any = []
+const DashboardChart = ({}: Props) => {
+    const { chartData, setChartData } = useContext(GraphContext)
+
+    const createChartObject = (name: string, data: any, time: any) => {
         if (name !== "Chip temp") {
             return {
                 name: name,
                 type: 'line',
-                x: Array.from(Array(simTime + 1).keys()),
+                x: time,
                 y: data,
                 visible: 'legendonly'
             }
@@ -32,50 +28,42 @@ const DashboardChart = ({chartData, isLoading, setChartData, simTime}: Props) =>
             return {
                 name: name,
                 type: 'line',
-                x: Array.from(Array(simTime + 1).keys()),
+                x: time,
                 y: data
             }
         }
     }
 
     useEffect(() => {
+        console.log("BEFORE LISTENING")
         //@ts-ignore
-        window.Echo.channel('channel').listen(
+        window.Echo.channel('test').listen(
             'DataBroadcaster',
             (e: any) => {
-                if (e.hello) {
-                    console.log("SIMULATION TIME: ", simTime)
-                    const currentTime = moment()
-                    const diff = currentTime.diff(lastUpdate)
-                    if (diff >= 250) {
-                        lastUpdate = currentTime
-                        let newArray : any = []
-                        e.hello.map((item: any) => {
+                console.log("EVENT: ", e)
+                if (e.error) {
+                    console.log("ERROR: ", e.error)
+                    return
+                }
+                else if (e.data) {
+                    let newArray : any = []
+                    e.data.map((item: any, index: number) => {
+                        if (index == 0) {
+                            let parsedData = item.data.map((itemData: string) => parseFloat(itemData) / 1000)
+                            time = parsedData
+                        } else {
                             let parsedData = item.data.map((itemData: string) => parseFloat(itemData))
-                            const lastData = parsedData[parsedData.length - 1]
-                            const foundChartItem = test.find((chartItem: any) => chartItem.name === item.name)
-                            let finalData : any = []
-                            if (foundChartItem)
-                                finalData = [...foundChartItem.y, lastData]
-                            else 
-                                finalData = [lastData]
                             newArray = [
                                 ...newArray, 
-                                createChartObject(item.name, finalData)
+                                createChartObject(item.name, parsedData, time)
                             ]
-                        })
-                        test = newArray
-                        setChartData(newArray)
-                    }
+                        }
+                    })
+                    setChartData(newArray)
                 } 
             }
-        )        
-    }, []);
-
-    useEffect(() => {
-        console.log("CHANGE", simTime)
-
-    }, [simTime])
+        )    
+    }, [])
 
     return (
         <MainCard>

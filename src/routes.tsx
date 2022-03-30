@@ -1,5 +1,4 @@
 import React from 'react'
-import Test from './views/pages/Test'
 import { Navigate, RouteObject } from 'react-router'
 import MainLayout from './layout/MainLayout'
 import Login from './views/login/Login'
@@ -16,10 +15,9 @@ import DeviceDetailWrapper from 'views/device/DeviceDetailWrapper'
 const routes: RouteObject[] = [
   {
     path: 'app',
-    element: <MainLayout/>,
+    element: localStorage.getItem('token') ? <MainLayout/> : <Navigate to="/"/>,
     children: 
     [
-      { path: 'test', element: <Test/> },
       { path: 'dashboard', element: <Dashboard/> },
       { path: 'software', element: <SoftwareWrapper/> },
       { path: 'device-types', element: <DeviceTypeWrapper/> },
@@ -31,14 +29,13 @@ const routes: RouteObject[] = [
   },
   {
     path: "/",
-    element: <><Outlet/></>,
+    element: localStorage.getItem('token') ? <Navigate to="/app/dashboard"/> : <><Outlet/></>,
     children: 
     [
       { path: "*", element: <Navigate to="/404"/> },
       { path: "/", element: localStorage.getItem('token') ? <Navigate to="/app/dashboard"/> : <Navigate to="/login"/> },
       { path: "404", element: <Page404/> },
       { path: 'login', element: <Login/> },
-      { path: 'register', element: <Test/> }
     ]
   }
 ]
