@@ -12,6 +12,8 @@ import {
 } from "@apollo/client"
 import { setContext } from '@apollo/client/link/context'
 import { BrowserRouter } from 'react-router-dom'
+import { CookiesProvider, Cookies } from 'react-cookie'
+
 import Echo from 'laravel-echo'
 //@ts-ignore
 window.Pusher = require('pusher-js')
@@ -31,10 +33,11 @@ window.Echo = new Echo({
 })
 
 const authLink = setContext((_, { headers }) => {
+  const cookies = new Cookies()
   return {
     headers: {
       ...headers,
-      authorization: `Bearer ${localStorage.getItem('token')}`,
+      authorization: `Bearer ${cookies.get('access_token') || ''}`,
     },
   }
 })
@@ -44,7 +47,6 @@ const client = new ApolloClient({
     authLink,
     new HttpLink({
       uri: 'https://api-exp01.iolab.sk/graphql',
-      // credentials: 'include',
     })
   ]),
   cache: new InMemoryCache()
@@ -52,11 +54,13 @@ const client = new ApolloClient({
 
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </ApolloProvider>,
+  <CookiesProvider>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ApolloProvider>
+  </CookiesProvider>,
   document.getElementById('root')
 );
 

@@ -1,37 +1,44 @@
-import React, { createContext, useState } from 'react'
-import { useRoutes } from 'react-router'
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, StyledEngineProvider } from '@mui/material';
-import NavigationScroll from './layout/NavigationScroll';
+import React, { createContext, useState } from "react";
+import { useRoutes } from "react-router";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline, StyledEngineProvider } from "@mui/material";
+import NavigationScroll from "./layout/NavigationScroll";
+import { useCookies } from "react-cookie";
 
-import routes from './routes'
-import themes from './themes'
+import routes from "./routes";
+import themes from "./themes";
 
 interface Props {}
 
 export const GraphContext = createContext<any>({
   chartData: [],
-  setChartData: (data: any) => {}
-})
+  setChartData: (data: any) => {},
+});
+
+export const CookieContext = createContext<any>({
+  accessToken: "",
+  setAccessToken: (token: string) => {},
+});
 
 const App = (props: Props) => {
-  const routing = useRoutes(routes)
-  const [chartData, setChartData] = useState()
+  const [cookies, setCookie] = useCookies(["access_token"]);
+  const routing = useRoutes(routes(cookies));
+  const [chartData, setChartData] = useState();
 
   return (
-    <GraphContext.Provider value={{ chartData, setChartData }}>
+    <CookieContext.Provider value={{ cookies, setCookie }}>
+      <GraphContext.Provider value={{ chartData, setChartData }}>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={themes({})}>
-            <CssBaseline/>
-              <NavigationScroll>
-                <div>
-                  {routing}
-                </div> 
-              </NavigationScroll>
+            <CssBaseline />
+            <NavigationScroll>
+              <div>{routing}</div>
+            </NavigationScroll>
           </ThemeProvider>
         </StyledEngineProvider>
-    </GraphContext.Provider>
-  )
-}
+      </GraphContext.Provider>
+    </CookieContext.Provider>
+  );
+};
 
-export default App
+export default App;
