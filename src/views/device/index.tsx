@@ -218,7 +218,7 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
 
   return (
     <MainCard>
-      <Grid container height="100vh" maxHeight="450px" spacing={gridSpacing}>
+      <Grid container height="100vh" spacing={gridSpacing}>
         <Grid item xs={12} md={8}>
           <div style={{ height: "100%", width: "100%" }}>
             <DataGrid

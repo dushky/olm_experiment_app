@@ -1,57 +1,56 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.scss';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.scss";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   ApolloLink,
-  HttpLink
-} from "@apollo/client"
-import { setContext } from '@apollo/client/link/context'
-import { BrowserRouter } from 'react-router-dom'
-import { CookiesProvider, Cookies } from 'react-cookie'
+  HttpLink,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { BrowserRouter } from "react-router-dom";
+import { CookiesProvider, Cookies } from "react-cookie";
 
-import Echo from 'laravel-echo'
+import Echo from "laravel-echo";
 //@ts-ignore
-window.Pusher = require('pusher-js')
+window.Pusher = require("pusher-js");
 
 // process.env.REACT_APP_PUSHER_ENV_KEY
 //@ts-ignore
 window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: 'local',
-  cluster: 'local',
-  wsHost: 'api-exp01.iolab.sk',
-  wsPort: 6001,
-  wssPort: 6001,
+  broadcaster: "pusher",
+  key: process.env.REACT_APP_PUSHER_ENV_KEY,
+  cluster: process.env.REACT_APP_PUSHER_ENV_CLUSTER,
+  wsHost: process.env.REACT_APP_PUSHER_ENV_WSHOST,
+  wsPort: process.env.REACT_APP_PUSHER_ENV_WSPORT,
+  wssPort: process.env.REACT_APP_PUSHER_ENV_WSSPORT,
   forceTLS: true,
   disableStats: true,
   // enabledTransports: ['ws', 'wss']
-})
+});
 
 const authLink = setContext((_, { headers }) => {
-  const cookies = new Cookies()
+  const cookies = new Cookies();
   return {
     headers: {
       ...headers,
-      authorization: `Bearer ${cookies.get('access_token') || ''}`,
+      authorization: `Bearer ${cookies.get("access_token") || ""}`,
     },
-  }
-})
+  };
+});
 
 const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     new HttpLink({
-      uri: 'https://api-exp01.iolab.sk/graphql',
-    })
+      uri: "https://api-exp01.iolab.sk/graphql",
+    }),
   ]),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });
-
 
 ReactDOM.render(
   <CookiesProvider>
@@ -61,7 +60,7 @@ ReactDOM.render(
       </BrowserRouter>
     </ApolloProvider>
   </CookiesProvider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
