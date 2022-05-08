@@ -560,7 +560,10 @@ export type SyncServerDevice = {
 export type SyncServerInput = {
   __typename?: 'SyncServerInput';
   name?: Maybe<Scalars['String']>;
+  options?: Maybe<Array<Maybe<SyncServerSelectOptions>>>;
+  order: Scalars['Int'];
   placeholder?: Maybe<Scalars['String']>;
+  row: Scalars['Int'];
   rules?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
@@ -570,6 +573,12 @@ export type SyncServerOutput = {
   __typename?: 'SyncServerOutput';
   name: Scalars['String'];
   title: Scalars['String'];
+};
+
+export type SyncServerSelectOptions = {
+  __typename?: 'SyncServerSelectOptions';
+  name: Scalars['String'];
+  value: Scalars['Int'];
 };
 
 export type SyncServerSoftware = {

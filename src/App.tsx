@@ -1,19 +1,15 @@
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 import { useRoutes } from "react-router";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline, StyledEngineProvider } from "@mui/material";
 import NavigationScroll from "./layout/NavigationScroll";
 import { useCookies } from "react-cookie";
+import { FormProvider, useForm } from "react-hook-form";
 
 import routes from "./routes";
 import themes from "./themes";
 
 interface Props {}
-
-export const GraphContext = createContext<any>({
-  chartData: [],
-  setChartData: (data: any) => {},
-});
 
 export const CookieContext = createContext<any>({
   accessToken: "",
@@ -23,11 +19,11 @@ export const CookieContext = createContext<any>({
 const App = (props: Props) => {
   const [cookies, setCookie] = useCookies(["access_token"]);
   const routing = useRoutes(routes(cookies));
-  const [chartData, setChartData] = useState();
+  const form = useForm();
 
   return (
     <CookieContext.Provider value={{ cookies, setCookie }}>
-      <GraphContext.Provider value={{ chartData, setChartData }}>
+      <FormProvider {...form}>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={themes({})}>
             <CssBaseline />
@@ -36,7 +32,7 @@ const App = (props: Props) => {
             </NavigationScroll>
           </ThemeProvider>
         </StyledEngineProvider>
-      </GraphContext.Provider>
+      </FormProvider>
     </CookieContext.Provider>
   );
 };

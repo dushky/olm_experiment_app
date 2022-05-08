@@ -5,33 +5,28 @@ import { Grid } from "@mui/material";
 import { gridSpacing } from "assets/constants";
 import MainCard from "ui-components/cards/MainCard";
 import PlotlyChart from "react-plotlyjs-ts";
-import { GraphContext } from "App";
 import { MyWindow } from "./index";
+import { LegendClickEvent } from "plotly.js";
+import { useFormContext } from "react-hook-form";
+import { findVisibilityOfAxis } from "./ChartHelpers";
 
 interface Props {}
 declare var window: MyWindow;
 
 let time: any = [];
 const DashboardChart = (props: Props) => {
-  const { chartData, setChartData } = useContext(GraphContext);
+  const { watch, setValue } = useFormContext();
+  const watchValue = watch();
 
   const createChartObject = (name: string, data: any, time: any) => {
-    if (name !== "Chip temp") {
-      return {
-        name: name,
-        type: "line",
-        x: time,
-        y: data,
-        visible: "legendonly",
-      };
-    } else {
-      return {
-        name: name,
-        type: "line",
-        x: time,
-        y: data,
-      };
-    }
+    const watchValue = watch();
+    return {
+      name: name,
+      type: "line",
+      x: time,
+      y: data,
+      visible: findVisibilityOfAxis(name, watchValue?.chartData),
+    };
   };
 
   useEffect(() => {
@@ -62,7 +57,7 @@ const DashboardChart = (props: Props) => {
                 ];
               }
             });
-            setChartData(newArray);
+            setValue("chartData", newArray);
           }
         }
       );
@@ -73,7 +68,13 @@ const DashboardChart = (props: Props) => {
     <MainCard>
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
-          <PlotlyChart data={chartData} />
+          <PlotlyChart
+            data={watchValue?.chartData}
+            onLegendClick={(e: LegendClickEvent) => {
+              setValue("chartData", e?.data);
+              return true;
+            }}
+          />
         </Grid>
       </Grid>
     </MainCard>
