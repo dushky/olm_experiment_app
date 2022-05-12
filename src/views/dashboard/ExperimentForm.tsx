@@ -152,6 +152,7 @@ const ExperimentForm = (props: Props) => {
             change={onCommandChanged}
             selectedValue={{ id: "", name: "" }}
             selectName="command"
+            id="command"
           />
         </Grid>
       );
@@ -166,6 +167,7 @@ const ExperimentForm = (props: Props) => {
             options={filterSoftware(deviceData.getDevice.software)}
             multiple={false}
             label="Pick software"
+            id="software"
             change={onSoftwareChanged}
             selectedValue={{ id: "", name: "" }}
             selectName="software"
@@ -195,6 +197,7 @@ const ExperimentForm = (props: Props) => {
               change={onDeviceChanged}
               selectedValue={{ id: "", name: "" }}
               selectName="device"
+              id="device"
             />
           </Grid>
           {buildSoftwareSelect()}

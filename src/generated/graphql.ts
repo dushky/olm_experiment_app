@@ -46,6 +46,7 @@ export type ConfigInput = {
 export type ConfigItem = {
   __typename?: 'ConfigItem';
   name?: Maybe<Scalars['String']>;
+  options?: Maybe<Array<Maybe<SyncServerSelectOptions>>>;
   placeholder?: Maybe<Scalars['String']>;
   rules?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
@@ -722,7 +723,7 @@ export type GetDeviceConfigQueryVariables = Exact<{
 }>;
 
 
-export type GetDeviceConfigQuery = { __typename?: 'Query', GetConfigByDeviceType?: { __typename?: 'Config', items?: Array<{ __typename?: 'ConfigMapTuple', scriptName?: ScriptName | null | undefined, items?: Array<{ __typename?: 'ConfigItem', name?: string | null | undefined, rules?: string | null | undefined, type?: string | null | undefined, title?: string | null | undefined, placeholder?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+export type GetDeviceConfigQuery = { __typename?: 'Query', GetConfigByDeviceType?: { __typename?: 'Config', items?: Array<{ __typename?: 'ConfigMapTuple', scriptName?: ScriptName | null | undefined, items?: Array<{ __typename?: 'ConfigItem', name?: string | null | undefined, rules?: string | null | undefined, type?: string | null | undefined, title?: string | null | undefined, placeholder?: string | null | undefined, options?: Array<{ __typename?: 'SyncServerSelectOptions', name: string, value: number } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined> | null | undefined } | null | undefined };
 
 export type GetDevicesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1202,6 +1203,10 @@ export const GetDeviceConfigDocument = gql`
         type
         title
         placeholder
+        options {
+          name
+          value
+        }
       }
     }
   }

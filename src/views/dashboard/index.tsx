@@ -40,7 +40,7 @@ const Dashboard = () => {
     selectedCommand: string
   ) => {
     setButtonLoading(true);
-    if (selectedCommand === "start")
+    if (selectedCommand === "start" || selectedCommand === "startLocal")
       await mutation({
         variables: {
           input: {

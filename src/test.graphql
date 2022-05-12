@@ -1,9 +1,9 @@
-mutation login($login:LoginInput) {
+mutation login($login: LoginInput) {
   login(input: $login) {
-    access_token,
+    access_token
     user {
-      name,
-      email,
+      name
+      email
       id
     }
   }
@@ -11,47 +11,47 @@ mutation login($login:LoginInput) {
 
 mutation logout {
   logout {
-    status,
+    status
     message
   }
 }
 
 mutation runScript($input: RunScriptInput) {
   RunScript(runScriptInput: $input) {
-    status,
-    experimentID,
+    status
+    experimentID
     errorMessage
   }
 }
 
 mutation stopScript($input: RunScriptInput) {
   StopScript(runScriptInput: $input) {
-    status,
+    status
     errorMessage
   }
 }
 
 mutation changeScript($input: RunScriptInput) {
   ChangeScript(runScriptInput: $input) {
-    status,
+    status
     errorMessage
   }
 }
 
 query getMe {
   me {
-    id,
-    name,
+    id
+    name
     email
   }
 }
 
 query getExperimentDetails($id: ID!) {
   experimentDetails(experimentID: $id) {
-    url,
-    status,
+    url
+    status
     values {
-      name,
+      name
       data
     }
   }
@@ -59,8 +59,8 @@ query getExperimentDetails($id: ID!) {
 
 query getUser($id: ID!) {
   user(id: $id) {
-    id,
-    name,
+    id
+    name
     email
   }
 }
@@ -72,7 +72,6 @@ query getSoftware {
     }
   }
 }
-
 
 query getDeviceTypes {
   device_types {
@@ -92,6 +91,10 @@ query getDeviceConfig($configInput: ConfigInput) {
         type
         title
         placeholder
+        options {
+          name
+          value
+        }
       }
     }
   }
@@ -159,13 +162,11 @@ mutation removeDeviceType($input: ID!) {
   }
 }
 
-
 mutation removeSoftware($input: ID!) {
   removeSoftware(id: $input) {
     ...SoftwareData
   }
 }
-
 
 fragment SoftwareData on Software {
   id

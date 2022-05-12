@@ -1,5 +1,7 @@
 import { Grid, TextField, Button, InputLabel } from "@mui/material";
 import { ConfigItem } from "generated/graphql";
+import CellDropdown from "views/device/CellDropdown";
+import { Update } from "assets/constants";
 
 const buildTextField = (params: ConfigItem, formik: any, index: number) => {
   return (
@@ -19,8 +21,30 @@ const buildTextField = (params: ConfigItem, formik: any, index: number) => {
   );
 };
 
-const buildSelectField = () => {
-  return <div></div>;
+const buildSelectField = (params: ConfigItem, formik: any, index: number) => {
+  let modifiedOptions: Update[] = [];
+  params?.options?.map((option) => {
+    return (modifiedOptions = [
+      ...modifiedOptions,
+      {
+        id: option?.value + "" ?? "",
+        name: option?.name + "" ?? "",
+      },
+    ]);
+  });
+  return (
+    <Grid item xs={4} md={4} key={index}>
+      <CellDropdown
+        options={modifiedOptions}
+        multiple={false}
+        label={params.title!}
+        change={formik.handleChange}
+        selectedValue={{ id: "", name: "" }}
+        selectName={params.name!}
+        id={params.name!}
+      />
+    </Grid>
+  );
 };
 
 const buildCheckboxField = () => {
@@ -54,7 +78,7 @@ export const buildForm = (param: ConfigItem, formik: any, index: number) => {
     case "file":
       return buildFileField(param, formik);
     case "select":
-      return buildSelectField();
+      return buildSelectField(param, formik, index);
     case "checkbox":
       return buildCheckboxField();
     default:

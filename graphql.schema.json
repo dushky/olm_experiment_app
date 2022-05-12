@@ -216,6 +216,22 @@
             "deprecationReason": null
           },
           {
+            "name": "options",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "SyncServerSelectOptions",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "placeholder",
             "description": null,
             "args": [],

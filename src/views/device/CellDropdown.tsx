@@ -1,66 +1,86 @@
-import React, {useState} from 'react'
+import React, { useState } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 
+import { Select, MenuItem, InputLabel, Grid } from "@mui/material";
 
-import { Select, MenuItem, InputLabel, Grid } from '@mui/material'
+import { Update } from "assets/constants";
 
-import { Update } from 'assets/constants';
-
-
-
-
-interface Props {   
-    options: Update[],
-    multiple: boolean,
-    label: string,
-    change: (e: any) => void,
-    selectedValue: Update | Update[],
-    selectName: string
+interface Props {
+  options: Update[];
+  multiple: boolean;
+  label: string;
+  change: (e: any) => void;
+  selectedValue: Update | Update[];
+  selectName: string;
+  id: string;
 }
 
 const useStyles = makeStyles(() => ({
-    formControl: {
-      width: '100%',
-      background: "#FFFFFF"
-    },
-    indeterminateColor: {
-      color: "#ffffff"
-    }
-  }));
+  formControl: {
+    width: "100%",
+    background: "#FFFFFF",
+  },
+  indeterminateColor: {
+    color: "#ffffff",
+  },
+}));
 
-const CellDropdown = ({options, multiple, label, change, selectedValue, selectName}: Props) => {
-    const classes = useStyles();
-    const [selected, setSelected] = useState<string | string[]>(Array.isArray(selectedValue) ? 
-      selectedValue.map((item) => {return item.id})
-    : selectedValue.id);
-    
-    const handleChange = (event: any) => {
-        const value = event.target.value;
+const CellDropdown = ({
+  options,
+  multiple,
+  label,
+  change,
+  selectedValue,
+  selectName,
+  id,
+}: Props) => {
+  const classes = useStyles();
+  const [selected, setSelected] = useState<string | string[]>(
+    Array.isArray(selectedValue)
+      ? selectedValue.map((item) => {
+          return item.id;
+        })
+      : selectedValue.id
+  );
 
-        setSelected(value);
-        change(event)
-    };   
+  const handleChange = (event: any) => {
+    const value = event.target.value;
 
-    return (
-        <Grid>
-          <InputLabel id="test-select-label">{label}</InputLabel>
-          <Select
-            labelId="test-select-label"
-            multiple={multiple}
-            value={selected}
-            onChange={handleChange}
-            name={selectName}
-            fullWidth
-          >
-            {options.map((option: Update) => (
-              <MenuItem value={option.id} key={option.id}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-    );
-}
+    setSelected(value);
+    change(event);
+  };
 
-export default CellDropdown
+  return (
+    <Grid>
+      <Select
+        labelId="test-select-label"
+        multiple={multiple}
+        value={selected}
+        onChange={handleChange}
+        name={selectName}
+        id={id}
+        fullWidth
+        sx={{
+          marginTop: "8px",
+        }}
+      >
+        {options.map((option: Update) => (
+          <MenuItem value={option.id} id={option.id} key={option.id}>
+            {option.name}
+          </MenuItem>
+        ))}
+      </Select>
+      <InputLabel
+        id="test-select-label"
+        sx={{
+          marginLeft: "14px",
+        }}
+      >
+        {label}
+      </InputLabel>
+    </Grid>
+  );
+};
+
+export default CellDropdown;
