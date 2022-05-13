@@ -2959,6 +2959,12 @@
             "deprecationReason": null
           },
           {
+            "name": "startLocal",
+            "description": "startLocal",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "stop",
             "description": "stop",
             "isDeprecated": false,

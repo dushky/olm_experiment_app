@@ -485,6 +485,8 @@ export enum ScriptName {
   Change = 'change',
   /** start */
   Start = 'start',
+  /** startLocal */
+  StartLocal = 'startLocal',
   /** stop */
   Stop = 'stop',
   /** update */
