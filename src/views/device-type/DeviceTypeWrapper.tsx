@@ -1,21 +1,18 @@
-import React from 'react'
-import { useGetDeviceTypesQuery } from 'generated/graphql'
-import Page404 from 'views/pages/Page404'
-import DeviceType from '.'
+import React from "react";
+import { useGetDeviceTypesQuery } from "generated/graphql";
+import DeviceType from ".";
+import { CircularProgress } from "@mui/material";
 
-interface Props {
-    
-}
+interface Props {}
 
 const DeviceTypeWrapper = (props: Props) => {
-    const { data, loading, error } = useGetDeviceTypesQuery({fetchPolicy: "no-cache"})
+  const { data, loading, error } = useGetDeviceTypesQuery({
+    fetchPolicy: "no-cache",
+  });
 
-    if (error || loading || !data)
-        return <Page404/>
+  if (error || loading || !data) return <CircularProgress />;
 
-    return (
-        <DeviceType deviceType={data.device_types!.data} />
-    )
-}
+  return <DeviceType deviceType={data.device_types!.data} />;
+};
 
-export default DeviceTypeWrapper
+export default DeviceTypeWrapper;

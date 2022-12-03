@@ -1,14 +1,15 @@
-import React, { useContext, useEffect } from "react";
+import React, {useEffect} from "react";
 
-import { Grid } from "@mui/material";
+import {Grid} from "@mui/material";
 
-import { gridSpacing } from "assets/constants";
+import {gridSpacing} from "assets/constants";
 import MainCard from "ui-components/cards/MainCard";
 import PlotlyChart from "react-plotlyjs-ts";
-import { MyWindow } from "./index";
-import { LegendClickEvent } from "plotly.js";
-import { useFormContext } from "react-hook-form";
-import { findVisibilityOfAxis } from "./ChartHelpers";
+import {MyWindow} from "./index";
+import {LegendClickEvent} from "plotly.js";
+import {useFormContext} from "react-hook-form";
+import {findVisibilityOfAxis} from "./ChartHelpers";
+import {toast} from "react-toastify";
 
 interface Props {}
 declare var window: MyWindow;
@@ -37,16 +38,15 @@ const DashboardChart = (props: Props) => {
         (e: any) => {
           console.log("EVENT: ", e);
           if (e.error) {
-            console.log("ERROR: ", e.error);
+            toast("An error has detected, check console for more info");
             return;
           } else if (e.data) {
             let newArray: any = [];
             e.data.map((item: any, index: number) => {
               if (index === 0) {
-                let parsedData = item.data.map((itemData: string) =>
-                  parseFloat(itemData)
+                time = item.data.map((itemData: string) =>
+                    parseFloat(itemData)
                 );
-                time = parsedData;
               } else {
                 let parsedData = item.data.map((itemData: string) =>
                   parseFloat(itemData)

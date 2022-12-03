@@ -4,8 +4,8 @@ import {
   useGetDeviceTypesQuery,
   useGetSoftwareQuery,
 } from "generated/graphql";
-import Page404 from "views/pages/Page404";
 import Device from ".";
+import { CircularProgress } from "@mui/material";
 
 const DeviceTypeWrapper = () => {
   const { data, loading, error } = useGetDevicesQuery({
@@ -26,7 +26,7 @@ const DeviceTypeWrapper = () => {
     softwareLoading ||
     deviceTypeLoading
   )
-    return <Page404 />;
+    return <CircularProgress />;
 
   return (
     <Device

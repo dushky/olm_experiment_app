@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Grid, Button, Snackbar, Alert } from "@mui/material";
+import { Grid, Button } from "@mui/material";
 import MainCard from "ui-components/cards/MainCard";
 import {
   DataGrid,
@@ -19,6 +19,7 @@ import {
   useRemoveDeviceTypeMutation,
   useCreateDeviceTypeMutation,
 } from "generated/graphql";
+import { toast } from "react-toastify";
 
 interface Props {
   deviceType: DeviceTypeDataFragment[];
@@ -29,7 +30,7 @@ const DeviceType = ({ deviceType }: Props) => {
   const [removeDeviceType] = useRemoveDeviceTypeMutation();
   const [createDeviceType] = useCreateDeviceTypeMutation();
   const [pageSize, setPageSize] = useState<number>(10);
-  const [open, setOpen] = useState<boolean>(false);
+  const [, setOpen] = useState<boolean>(false);
 
   const handleRows = (): { id: string; name: string }[] => {
     return deviceType.map((item: DeviceTypeDataFragment) => {
@@ -54,19 +55,26 @@ const DeviceType = ({ deviceType }: Props) => {
           startIcon={<DeleteIcon />}
           style={{ marginLeft: 16 }}
           onClick={async () => {
-            await removeDeviceType({
-              variables: {
-                input: params.id,
-              },
-            }).then((removedDeviceType) => {
-              setRows(
-                rows.filter(
-                  (item) =>
-                    item.id !== removedDeviceType.data?.removeDeviceType.id
-                )
-              );
-              setOpen(true);
-            });
+            toast.promise(
+              removeDeviceType({
+                variables: {
+                  input: params.id,
+                },
+              }).then((removedDeviceType) => {
+                setRows(
+                  rows.filter(
+                    (item) =>
+                      item.id !== removedDeviceType.data?.removeDeviceType.id
+                  )
+                );
+                setOpen(true);
+              }),
+              {
+                pending: "Deleting device type",
+                success: "Device type deleted",
+                error: "An error has been detected",
+              }
+            );
           }}
         >
           Delete
@@ -123,22 +131,29 @@ const DeviceType = ({ deviceType }: Props) => {
   };
 
   const handleSubmit = async (value: string) => {
-    await createDeviceType({
-      variables: {
-        input: {
-          name: value,
+    toast.promise(
+      createDeviceType({
+        variables: {
+          input: {
+            name: value,
+          },
         },
-      },
-    }).then((value) => {
-      setRows([
-        ...rows,
-        {
-          id: value.data!.createDeviceType.id,
-          name: value.data!.createDeviceType.name,
-        },
-      ]);
-      setOpen(true);
-    });
+      }).then((value) => {
+        setRows([
+          ...rows,
+          {
+            id: value.data!.createDeviceType.id,
+            name: value.data!.createDeviceType.name,
+          },
+        ]);
+        setOpen(true);
+      }),
+      {
+        pending: "Adding device type",
+        success: "Device type added",
+        error: "An error has been detected",
+      }
+    );
   };
 
   const handleEdit = async (e: GridCellEditCommitParams) => {
@@ -167,7 +182,11 @@ const DeviceType = ({ deviceType }: Props) => {
               rowsPerPageOptions={[5, 10, 20, 50]}
               onPageSizeChange={(item: number) => setPageSize(item)}
               onCellEditCommit={(item: GridCellEditCommitParams) =>
-                handleEdit(item)
+                toast.promise(handleEdit(item), {
+                  pending: "Updating device type",
+                  success: "Device type updated",
+                  error: "An error has been detected",
+                })
               }
               components={{
                 Toolbar: exportToolbar,
@@ -179,21 +198,6 @@ const DeviceType = ({ deviceType }: Props) => {
           <AddDeviceTypeForm handleSubmit={handleSubmit} />
         </Grid>
       </Grid>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        onClose={handleClose}
-      >
-        <Alert
-          onClose={handleClose as any}
-          style={{ marginLeft: "auto" }}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          Success
-        </Alert>
-      </Snackbar>
     </MainCard>
   );
 };

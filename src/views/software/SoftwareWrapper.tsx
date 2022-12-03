@@ -1,19 +1,17 @@
-import React from 'react'
+import React from "react";
 
-import Software from '.'
-import { useGetSoftwareQuery } from 'generated/graphql'
-import Page404 from 'views/pages/Page404'
-
+import Software from ".";
+import { useGetSoftwareQuery } from "generated/graphql";
+import { CircularProgress } from "@mui/material";
 
 const SoftwareWrapper = () => {
-    const { data, loading, error } = useGetSoftwareQuery({fetchPolicy: "no-cache"});
+  const { data, loading, error } = useGetSoftwareQuery({
+    fetchPolicy: "no-cache",
+  });
 
-    if (error || loading || !data)
-        return <Page404/>
+  if (error || loading || !data) return <CircularProgress />;
 
-    return (
-        <Software software={data!.software!.data!}/>
-    )
-}
+  return <Software software={data!.software!.data!} />;
+};
 
-export default SoftwareWrapper
+export default SoftwareWrapper;

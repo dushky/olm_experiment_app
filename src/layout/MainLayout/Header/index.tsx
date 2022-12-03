@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";
-import { Avatar, Box, ButtonBase } from "@mui/material";
+import { Avatar, Box, ButtonBase, CircularProgress } from "@mui/material";
 
 // project imports
 import LogoSection from "../LogoSection";
@@ -12,7 +12,6 @@ import NotificationSection from "./NotificationSection";
 // assets
 import { IconMenu2 } from "@tabler/icons";
 import { useGetMeQuery } from "generated/graphql";
-import Page404 from "views/pages/Page404";
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -20,7 +19,7 @@ const Header = ({ handleLeftDrawerToggle }: any) => {
   const theme: any = useTheme();
   const { data } = useGetMeQuery();
 
-  if (!data) return <Page404 />;
+  if (!data) return <CircularProgress />;
 
   return (
     <>

@@ -19,6 +19,8 @@ import {
   SoftwareDataFragment,
 } from "generated/graphql";
 
+import { toast } from "react-toastify";
+
 interface Props {
   handleSubmit: (value: any) => Promise<void>;
   software: SoftwareDataFragment[];
@@ -35,7 +37,11 @@ const AddDeviceForm = ({ handleSubmit, deviceTypes, software }: Props) => {
     },
     validationSchema: deviceTypeSchema,
     onSubmit: (values, { resetForm }) => {
-      handleSubmit(values);
+      toast.promise(handleSubmit(values), {
+        pending: "Adding device",
+        success: "Device added",
+        error: "An error has been detected",
+      });
       resetForm();
     },
   });

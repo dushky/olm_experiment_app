@@ -16,6 +16,7 @@ import {
 } from "generated/graphql";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddSoftwareForm from "./AddSoftwareForm";
+import { toast } from "react-toastify";
 
 interface Props {
   software: SoftwareDataFragment[];
@@ -70,17 +71,25 @@ const Software = ({ software }: Props) => {
           startIcon={<DeleteIcon />}
           style={{ marginLeft: 16 }}
           onClick={async () => {
-            await removeSoftware({
-              variables: {
-                input: params.id,
-              },
-            }).then((removedSoftware) => {
-              setRows(
-                rows.filter(
-                  (item) => item.id !== removedSoftware.data?.removeSoftware.id
-                )
-              );
-            });
+            toast.promise(
+              removeSoftware({
+                variables: {
+                  input: params.id,
+                },
+              }).then((removedSoftware) => {
+                setRows(
+                  rows.filter(
+                    (item) =>
+                      item.id !== removedSoftware.data?.removeSoftware.id
+                  )
+                );
+              }),
+              {
+                pending: "Removing software",
+                success: "Software removed",
+                error: "An error has been detected",
+              }
+            );
           }}
         >
           Delete
@@ -146,7 +155,11 @@ const Software = ({ software }: Props) => {
               rowsPerPageOptions={[5, 10, 20, 50]}
               onPageSizeChange={(item: number) => setPageSize(item)}
               onCellEditCommit={(item: GridCellEditCommitParams) =>
-                handleEdit(item)
+                toast.promise(handleEdit(item), {
+                  pending: "Updating software",
+                  success: "Software updated",
+                  error: "An error has been detected",
+                })
               }
             />
           </div>

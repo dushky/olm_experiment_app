@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import routes from "./routes";
 import themes from "./themes";
+import { ToastContainer } from "react-toastify";
 
 interface Props {}
 
@@ -27,6 +28,7 @@ const App = (props: Props) => {
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={themes({})}>
             <CssBaseline />
+            <ToastContainer />
             <NavigationScroll>
               <div>{routing}</div>
             </NavigationScroll>

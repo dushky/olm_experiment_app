@@ -6,9 +6,10 @@ import {
   useUpdateDeviceMutation,
   UpdateDevice,
 } from "generated/graphql";
-import Page404 from "views/pages/Page404";
 import { useParams } from "react-router";
 import DeviceDetail from "./DeviceDetail";
+import { CircularProgress } from "@mui/material";
+import { toast } from "react-toastify";
 
 interface Props {}
 
@@ -23,18 +24,25 @@ const DeviceDetailWrapper = (props: Props) => {
 
   const [mutation] = useUpdateDeviceMutation();
   const handleSubmit = (values: UpdateDevice) => {
-    mutation({
-      variables: {
-        input: values,
-      },
-    });
+    toast.promise(
+      mutation({
+        variables: {
+          input: values,
+        },
+      }),
+      {
+        pending: "Editing device",
+        success: "Device updated",
+        error: "An error has been detected",
+      }
+    );
   };
 
   const { data: softwareData } = useGetSoftwareQuery();
   const { data: deviceTypeData } = useGetDeviceTypesQuery();
 
   if (error || loading || !data || !softwareData || !deviceTypeData)
-    return <Page404 />;
+    return <CircularProgress />;
 
   return (
     <DeviceDetail

@@ -16,6 +16,8 @@ import CellDropdown from "views/device/CellDropdown";
 
 import { buildForm } from "./ExperimentFormBuilder";
 import { MyWindow } from ".";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Props {
   handleFormSubmit: (
@@ -51,6 +53,10 @@ const ExperimentForm = (props: Props) => {
       user_function: "",
     },
     onSubmit: async (values) => {
+      if (!selectedCommand) {
+        toast("Select command to run experiment");
+        return;
+      }
       let vals = "";
       Object.entries(values).map(([key, value], index) => {
         if (value) {
@@ -66,11 +72,15 @@ const ExperimentForm = (props: Props) => {
         (item: any, index: number) => index === selectedCommand
       )[0];
 
-      await handleSubmit(vals, selected, command.scriptName);
+      toast.promise(handleSubmit(vals, selected, command.scriptName), {
+        pending: "Sending request to API",
+        success: "Success",
+        error: "Error check console for more info",
+      });
     },
   });
 
-  const [selectedCommand, setSelectedCommand] = useState(0);
+  const [selectedCommand, setSelectedCommand] = useState(undefined);
 
   const { data: deviceData } = useGetDeviceByIdQuery({
     variables: {
@@ -135,10 +145,12 @@ const ExperimentForm = (props: Props) => {
   };
 
   const buildFormik = () => {
-    if (data && data[selectedCommand])
-      return data[selectedCommand].items.map((item: any, index: number) => {
-        return buildForm(item, formik, index);
-      });
+    if (data && data[selectedCommand ?? 0])
+      return data[selectedCommand ?? 0].items.map(
+        (item: any, index: number) => {
+          return buildForm(item, formik, index);
+        }
+      );
   };
 
   const buildCommandsSelect = () => {
@@ -177,6 +189,23 @@ const ExperimentForm = (props: Props) => {
     }
   };
 
+  const buildRunExperimentButton = () => {
+    if (selectedCommand != undefined) {
+      return (
+        <Grid item xs={4} md={4} margin="auto">
+          <LoadingButton
+            loadingPosition="start"
+            startIcon={<PlayCircleFilledOutlinedIcon />}
+            variant="contained"
+            type="submit"
+          >
+            Run experiment
+          </LoadingButton>
+        </Grid>
+      );
+    }
+  };
+
   return (
     <div>
       <Typography sx={{ fontSize: 28 }} color="text.primary" gutterBottom>
@@ -203,16 +232,7 @@ const ExperimentForm = (props: Props) => {
           {buildSoftwareSelect()}
           {buildCommandsSelect()}
           {buildFormik()}
-          <Grid item xs={4} md={4} margin="auto">
-            <LoadingButton
-              loadingPosition="start"
-              startIcon={<PlayCircleFilledOutlinedIcon />}
-              variant="contained"
-              type="submit"
-            >
-              Run experiment
-            </LoadingButton>
-          </Grid>
+          {buildRunExperimentButton()}
         </Grid>
       </form>
     </div>

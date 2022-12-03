@@ -46,7 +46,7 @@ const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     new HttpLink({
-      uri: "https://api-exp01.iolab.sk/graphql",
+      uri: process.env.REACT_APP_API_ENDPOINT || "http://127.0.0.1:8000/graphql",
     }),
   ]),
   cache: new InMemoryCache(),

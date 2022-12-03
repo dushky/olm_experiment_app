@@ -24,6 +24,7 @@ import {
 } from "generated/graphql";
 import AddDeviceForm from "./AddDeviceForm";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 interface Props {
   device: DeviceDataFragment[];
@@ -119,18 +120,25 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
           size="small"
           startIcon={<DeleteIcon />}
           onClick={async () => {
-            await removeMutation({
-              variables: {
-                id: params.id,
-              },
-            }).then((removedDevice) => {
-              setRows(
-                rows.filter(
-                  (item) => item.id !== removedDevice.data?.removeDevice.id
-                )
-              );
-              setOpen(true);
-            });
+            toast.promise(
+              removeMutation({
+                variables: {
+                  id: params.id,
+                },
+              }).then((removedDevice) => {
+                setRows(
+                  rows.filter(
+                    (item) => item.id !== removedDevice.data?.removeDevice.id
+                  )
+                );
+                setOpen(true);
+              }),
+              {
+                pending: "Deleting",
+                success: "Device deleted",
+                error: "An error has been detected",
+              }
+            );
           }}
         >
           Delete

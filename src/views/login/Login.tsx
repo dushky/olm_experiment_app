@@ -13,6 +13,7 @@ import LoginForm from "./LoginForm";
 import { useNavigate } from "react-router";
 
 import { useCookies } from "react-cookie";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -30,26 +31,35 @@ const Login = () => {
   const handleSubmitForm = async (values: LoginInput) => {
     setIsSubmitting(true);
     setUser(values);
-    loginMutation({
-      variables: {
-        login: values,
-      },
-    })
-      .then((value: FetchResult) => {
-        let expires = new Date();
-        expires.setTime(
-          expires.getTime() + value?.data?.login.expires_in * 1000
-        );
-        setCookie("access_token", value?.data?.login?.access_token, {
-          path: "/",
-          expires,
-        });
-        navigator("/app/dashboard/");
-        // forceUpdate()
-      })
-      .catch((e: any) => {
+    toast
+      .promise(
+        loginMutation({
+          variables: {
+            login: values,
+          },
+        }).then((value: FetchResult) => {
+          let expires = new Date();
+          expires.setTime(
+            expires.getTime() + value?.data?.login.expires_in * 1000
+          );
+          setCookie("access_token", value?.data?.login?.access_token, {
+            path: "/",
+            expires,
+          });
+          navigator("/app/dashboard/");
+          // forceUpdate()
+        }),
+        {
+          pending: "Loging in",
+          success: "Logged in",
+          error: "Error with logging in",
+        }
+      )
+      .then((e) => {
         setIsSubmitting(false);
-        console.log(e);
+      })
+      .catch((e) => {
+        setIsSubmitting(false);
       });
   };
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 // MUI
-import { Grid } from "@mui/material";
+import { Grid, CircularProgress } from "@mui/material";
 
 // constants
 import { gridSpacing } from "assets/constants";
@@ -13,9 +13,9 @@ import {
   useStopScriptMutation,
   useChangeScriptMutation,
 } from "generated/graphql";
-import Page404 from "views/pages/Page404";
 import ExperimentFormWrapper from "./ExperimentFormWrapper";
 import MainCard from "ui-components/cards/MainCard";
+import { toast } from "react-toastify";
 
 export interface MyWindow extends Window {
   experimentId: string | undefined;
@@ -25,7 +25,7 @@ export interface MyWindow extends Window {
 declare var window: MyWindow;
 
 const Dashboard = () => {
-  const [buttonLoading, setButtonLoading] = useState(false);
+  const [, setButtonLoading] = useState(false);
   const { data: devicesData } = useGetDevicesQuery({
     fetchPolicy: "cache-and-network",
   });
@@ -39,6 +39,10 @@ const Dashboard = () => {
     selectedDevice: DeviceConfig,
     selectedCommand: string
   ) => {
+    if (!selectedCommand) {
+      toast("Select command to run");
+      return;
+    }
     setButtonLoading(true);
     if (selectedCommand === "start" || selectedCommand === "startLocal")
       await mutation({
@@ -79,7 +83,7 @@ const Dashboard = () => {
   };
 
   if (!devicesData) {
-    return <Page404 />;
+    return <CircularProgress />;
   }
 
   return (
