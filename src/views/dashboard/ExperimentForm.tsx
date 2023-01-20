@@ -53,7 +53,7 @@ const ExperimentForm = (props: Props) => {
       user_function: "",
     },
     onSubmit: async (values) => {
-      if (!selectedCommand) {
+      if (selectedCommand === undefined) {
         toast("Select command to run experiment");
         return;
       }
