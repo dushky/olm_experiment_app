@@ -15,7 +15,6 @@ import { gridSpacing, Update } from "assets/constants";
 import CellDropdown from "views/device/CellDropdown";
 
 import { buildForm } from "./ExperimentFormBuilder";
-import { MyWindow } from ".";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,9 +28,10 @@ interface Props {
   selected: DeviceConfig;
   setSelected: (selected: any) => any;
   data: any;
-}
+  setSelectedSoftwareName: (softwareName: string | undefined) => void;
+  setSelectedDeviceName: (deviceName: string | undefined) => void;
 
-declare var window: MyWindow;
+}
 
 const ExperimentForm = (props: Props) => {
   const {
@@ -40,6 +40,8 @@ const ExperimentForm = (props: Props) => {
     selected,
     setSelected,
     data,
+    setSelectedSoftwareName,
+    setSelectedDeviceName
   } = props;
   const formik = useFormik({
     initialValues: {
@@ -122,7 +124,7 @@ const ExperimentForm = (props: Props) => {
     let dev = devices.filter((item) => item.id === e.target.value)[0];
     //@ts-ignore
     window.Echo.connector.channels = {};
-    window.selectedDeviceName = dev.name as string;
+    setSelectedDeviceName(dev.name as string);
     setSelected({
       deviceName: dev.deviceType.name as any,
       software: "",
@@ -134,6 +136,7 @@ const ExperimentForm = (props: Props) => {
     let software = deviceData?.getDevice.software.filter(
       (item) => item.id === e.target.value
     )[0];
+    setSelectedSoftwareName(software?.name);
     setSelected({
       ...selected,
       software: software?.name,

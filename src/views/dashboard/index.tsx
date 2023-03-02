@@ -17,18 +17,15 @@ import ExperimentFormWrapper from "./ExperimentFormWrapper";
 import MainCard from "ui-components/cards/MainCard";
 import { toast } from "react-toastify";
 
-export interface MyWindow extends Window {
-  experimentId: string | undefined;
-  selectedDeviceName: string | undefined;
-}
-
-declare var window: MyWindow;
-
 const Dashboard = () => {
   const [, setButtonLoading] = useState(false);
   const { data: devicesData } = useGetDevicesQuery({
     fetchPolicy: "cache-and-network",
   });
+
+  const [experimentId, setExperimentId] = useState<string | undefined>(undefined);
+  const [selectedDeviceName, setSelectedDeviceName] = useState<string | undefined>(undefined);
+  const [selectedSoftwareName, setSelectedSoftwareName] = useState<string | undefined>(undefined);
 
   const [mutation] = useRunScriptMutation();
   const [stopMutation] = useStopScriptMutation();
@@ -55,7 +52,7 @@ const Dashboard = () => {
           },
         },
       }).then((values) => {
-        window.experimentId = values?.data?.RunScript?.experimentID;
+        setExperimentId(values?.data?.RunScript?.experimentID)
       });
     else if (selectedCommand === "change") {
       await changeMutation({
@@ -64,7 +61,7 @@ const Dashboard = () => {
             inputParameter: values,
             scriptName: selectedCommand,
             device: selectedDevice,
-            experimentID: window.experimentId,
+            experimentID: experimentId,
           },
         },
       });
@@ -75,7 +72,7 @@ const Dashboard = () => {
             inputParameter: values,
             scriptName: selectedCommand,
             device: selectedDevice,
-            experimentID: window.experimentId,
+            experimentID: experimentId,
           },
         },
       });
@@ -91,13 +88,18 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={6} md={6}>
-            <DashboardChart />
+            <DashboardChart
+                selectedSoftwareName={selectedSoftwareName}
+                selectedDeviceName={selectedDeviceName}
+            />
           </Grid>
           <Grid item xs={6} md={6}>
             <MainCard>
               <ExperimentFormWrapper
                 handleFormSubmit={handleSubmit}
                 devices={devicesData!.devices!.data}
+                setSelectedSoftwareName={setSelectedSoftwareName}
+                setSelectedDeviceName={setSelectedDeviceName}
               />
             </MainCard>
           </Grid>

@@ -12,12 +12,14 @@ interface Props {
   handleFormSubmit: (
     values: any,
     selectedDevice: DeviceConfig,
-    selectedCommand: string
+    selectedCommand: string,
   ) => Promise<void>;
   devices: DeviceDataFragment[];
+  setSelectedSoftwareName: (softwareName: string | undefined) => void
+  setSelectedDeviceName: (deviceName: string | undefined) => void
 }
 
-const ExperimentFormWrapper = ({ handleFormSubmit, devices }: Props) => {
+const ExperimentFormWrapper = ({ handleFormSubmit, devices, setSelectedSoftwareName, setSelectedDeviceName }: Props) => {
   const [selected, setSelected] = useState<DeviceConfig>({
     deviceName: "" as any,
     software: "" as any,
@@ -40,6 +42,8 @@ const ExperimentFormWrapper = ({ handleFormSubmit, devices }: Props) => {
       selected={selected}
       setSelected={setSelected}
       data={data?.GetConfigByDeviceType!.items}
+      setSelectedSoftwareName={setSelectedSoftwareName}
+      setSelectedDeviceName={setSelectedDeviceName}
     />
   );
 };
