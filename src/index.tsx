@@ -27,7 +27,7 @@ window.Echo = new Echo({
   wsHost: process.env.REACT_APP_PUSHER_ENV_WSHOST,
   wsPort: process.env.REACT_APP_PUSHER_ENV_WSPORT,
   wssPort: process.env.REACT_APP_PUSHER_ENV_WSSPORT,
-  forceTLS: true,
+  forceTLS: false,
   disableStats: true,
   // enabledTransports: ['ws', 'wss']
 });
