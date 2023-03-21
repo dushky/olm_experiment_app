@@ -1,8 +1,6 @@
 import React, {useCallback, useEffect, useRef} from "react";
 
-import {Grid} from "@mui/material";
 
-import {gridSpacing} from "assets/constants";
 import MainCard from "ui-components/cards/MainCard";
 import PlotlyChart from "react-plotlyjs-ts";
 import {LegendClickEvent} from "plotly.js";
@@ -72,18 +70,25 @@ const DashboardChart: React.FC<Props> = ({selectedSoftwareName, selectedDeviceNa
 
   return (
     <MainCard>
-      <Grid container spacing={gridSpacing}>
-        <Grid item xs={12}>
           <PlotlyChart
             data={watchValue?.chartData}
+            layout={{
+
+                margin: {
+                    b: 20,
+                    l: 50,
+                    r: 10,
+                    t :20,
+                    pad: 4
+                }
+            }
+            }
             onLegendClick={(e: LegendClickEvent) => {
               setValue("chartData", e?.data);
               showDefaultVisibility.current = false
               return true;
             }}
           />
-        </Grid>
-      </Grid>
     </MainCard>
   );
 };
