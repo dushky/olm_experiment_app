@@ -30,6 +30,7 @@ interface Props {
   data: any;
   setSelectedSoftwareName: (softwareName: string | undefined) => void;
   setSelectedDeviceName: (deviceName: string | undefined) => void;
+  setSelectedDeviceId: (deviceId: string | undefined) => void;
 
 }
 
@@ -41,7 +42,8 @@ const ExperimentForm = (props: Props) => {
     setSelected,
     data,
     setSelectedSoftwareName,
-    setSelectedDeviceName
+    setSelectedDeviceName,
+    setSelectedDeviceId
   } = props;
   const formik = useFormik({
     initialValues: {
@@ -125,6 +127,7 @@ const ExperimentForm = (props: Props) => {
     //@ts-ignore
     window.Echo.connector.channels = {};
     setSelectedDeviceName(dev.name as string);
+    setSelectedDeviceId(dev.id);
     setSelected({
       deviceName: dev.deviceType.name as any,
       software: "",

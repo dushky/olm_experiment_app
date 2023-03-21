@@ -12,10 +12,14 @@ import {
   DeviceConfig,
   useStopScriptMutation,
   useChangeScriptMutation,
+  useGetDeviceReservationStatusQuery,
 } from "generated/graphql";
 import ExperimentFormWrapper from "./ExperimentFormWrapper";
 import MainCard from "ui-components/cards/MainCard";
 import { toast } from "react-toastify";
+import DashboardVideo from "./DashboardVideo";
+
+const DEVICE_RESERVATION_CHECK = 5000;
 
 const Dashboard = () => {
   const [, setButtonLoading] = useState(false);
@@ -25,7 +29,15 @@ const Dashboard = () => {
 
   const [experimentId, setExperimentId] = useState<string | undefined>(undefined);
   const [selectedDeviceName, setSelectedDeviceName] = useState<string | undefined>(undefined);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
   const [selectedSoftwareName, setSelectedSoftwareName] = useState<string | undefined>(undefined);
+
+  const { loading, error, data, } = useGetDeviceReservationStatusQuery({
+    variables: {
+      deviceId: selectedDeviceId as string
+    },
+    pollInterval: DEVICE_RESERVATION_CHECK,
+  })
 
   const [mutation] = useRunScriptMutation();
   const [stopMutation] = useStopScriptMutation();
@@ -86,6 +98,14 @@ const Dashboard = () => {
   return (
     <Grid container spacing={gridSpacing}>
       <Grid item xs={12}>
+        <Collapse in={data?.getDevice.is_reserved}>
+          <Alert severity="error">
+            <AlertTitle><strong>WARNING: Selected device is currently reserved by user on central server</strong></AlertTitle>
+            When the experiment is running, it is possible to view its progress by selecting the parameters in the graph or selecting the software that selects the default parameters
+          </Alert>
+        </Collapse>
+      </Grid>
+      <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={6} md={6}>
             <DashboardChart
@@ -100,6 +120,7 @@ const Dashboard = () => {
                 devices={devicesData!.devices!.data}
                 setSelectedSoftwareName={setSelectedSoftwareName}
                 setSelectedDeviceName={setSelectedDeviceName}
+                setSelectedDeviceId={setSelectedDeviceId}
               />
             </MainCard>
           </Grid>

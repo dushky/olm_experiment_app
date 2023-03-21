@@ -108,6 +108,13 @@ query getDevices {
   }
 }
 
+query getDeviceReservationStatus($deviceId: ID!) {
+  getDevice(id: $deviceId) {
+    id
+    is_reserved
+  }
+}
+
 query getDeviceByID($input: ID!) {
   getDevice(id: $input) {
     ...DeviceData

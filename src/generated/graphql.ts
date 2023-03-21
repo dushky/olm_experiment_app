@@ -33,6 +33,12 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+export type CameraStatus = {
+  __typename?: 'CameraStatus';
+  isConnected: Scalars['Boolean'];
+  status: Scalars['String'];
+};
+
 export type Config = {
   __typename?: 'Config';
   items?: Maybe<Array<Maybe<ConfigMapTuple>>>;
@@ -80,6 +86,7 @@ export type Device = {
   created_at: Scalars['DateTime'];
   deviceType: DeviceType;
   id: Scalars['ID'];
+  is_reserved: Scalars['Boolean'];
   name: Scalars['String'];
   port: Scalars['String'];
   software: Array<Software>;
@@ -100,6 +107,11 @@ export type DevicePaginator = {
   data: Array<Device>;
   /** Pagination information about the list of items. */
   paginatorInfo: PaginatorInfo;
+};
+
+export type DeviceReservationStatusInput = {
+  deviceID: Scalars['ID'];
+  isReserved: Scalars['Boolean'];
 };
 
 export enum DeviceStatus {
@@ -181,7 +193,10 @@ export type Mutation = {
   removeDeviceType: DeviceType;
   removeSoftware: Software;
   socialLogin: AuthPayload;
+  startVideoStream: VideoStreamStatus;
+  stopVideoStream: StopVideoStreamStatus;
   updateDevice: Device;
+  updateDeviceReservationStatus: UpdateDeviceReservationStatusResult;
   updateDeviceType: DeviceType;
   updateForgottenPassword: ForgotPasswordResponse;
   updatePassword: UpdatePasswordResponse;
@@ -263,6 +278,11 @@ export type MutationSocialLoginArgs = {
 
 export type MutationUpdateDeviceArgs = {
   input?: Maybe<UpdateDevice>;
+};
+
+
+export type MutationUpdateDeviceReservationStatusArgs = {
+  deviceReservationStatusInput?: Maybe<DeviceReservationStatusInput>;
 };
 
 
@@ -383,6 +403,7 @@ export type Query = {
   __typename?: 'Query';
   GetConfigByDeviceType?: Maybe<Config>;
   SyncServer: SyncServerData;
+  cameraStatus: CameraStatus;
   device_types?: Maybe<DeviceTypePaginator>;
   devices?: Maybe<DevicePaginator>;
   experimentDetails?: Maybe<ExperimentDetail>;
@@ -391,6 +412,7 @@ export type Query = {
   software?: Maybe<SoftwarePaginator>;
   user?: Maybe<User>;
   users?: Maybe<UserPaginator>;
+  videoStreamStatus: VideoStreamStatus;
 };
 
 
@@ -540,6 +562,12 @@ export enum SortOrder {
   Desc = 'DESC'
 }
 
+export type StopVideoStreamStatus = {
+  __typename?: 'StopVideoStreamStatus';
+  isStopped: Scalars['Boolean'];
+  status: Scalars['String'];
+};
+
 export type SyncServerCommand = {
   __typename?: 'SyncServerCommand';
   input: Array<Maybe<SyncServerInput>>;
@@ -574,6 +602,7 @@ export type SyncServerInput = {
 
 export type SyncServerOutput = {
   __typename?: 'SyncServerOutput';
+  defaultVisibilityFor?: Maybe<Array<Scalars['String']>>;
   name: Scalars['String'];
   title: Scalars['String'];
 };
@@ -607,6 +636,11 @@ export type UpdateDevice = {
   name: Scalars['String'];
   port: Scalars['String'];
   software: Array<Scalars['ID']>;
+};
+
+export type UpdateDeviceReservationStatusResult = {
+  __typename?: 'UpdateDeviceReservationStatusResult';
+  updatedDevicesCount: Scalars['Int'];
 };
 
 export type UpdateDeviceType = {
@@ -656,6 +690,12 @@ export type UserPaginator = {
 
 export type VerifyEmailInput = {
   token: Scalars['String'];
+};
+
+export type VideoStreamStatus = {
+  __typename?: 'VideoStreamStatus';
+  isRunning: Scalars['Boolean'];
+  status?: Maybe<Scalars['String']>;
 };
 
 export type LoginMutationVariables = Exact<{
@@ -732,12 +772,29 @@ export type GetDevicesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetDevicesQuery = { __typename?: 'Query', devices?: { __typename?: 'DevicePaginator', data: Array<{ __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> }> } | null | undefined };
 
+export type GetDeviceReservationStatusQueryVariables = Exact<{
+  deviceId: Scalars['ID'];
+}>;
+
+
+export type GetDeviceReservationStatusQuery = { __typename?: 'Query', getDevice: { __typename?: 'Device', id: string, is_reserved: boolean } };
+
 export type GetDeviceByIdQueryVariables = Exact<{
   input: Scalars['ID'];
 }>;
 
 
 export type GetDeviceByIdQuery = { __typename?: 'Query', getDevice: { __typename?: 'Device', id: string, name: string, port: string, deviceType: { __typename?: 'DeviceType', id: string, name: string }, software: Array<{ __typename?: 'Software', id: string, name: string }> } };
+
+export type GetCameraStatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCameraStatusQuery = { __typename?: 'Query', cameraStatus: { __typename?: 'CameraStatus', isConnected: boolean, status: string } };
+
+export type GetVideoStreamStatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetVideoStreamStatusQuery = { __typename?: 'Query', videoStreamStatus: { __typename?: 'VideoStreamStatus', isRunning: boolean, status?: string | null | undefined } };
 
 export type CreateDeviceMutationVariables = Exact<{
   input?: Maybe<CreateDevice>;
@@ -801,6 +858,16 @@ export type RemoveSoftwareMutationVariables = Exact<{
 
 
 export type RemoveSoftwareMutation = { __typename?: 'Mutation', removeSoftware: { __typename?: 'Software', id: string, name: string } };
+
+export type StartVideoStreamMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StartVideoStreamMutation = { __typename?: 'Mutation', startVideoStream: { __typename?: 'VideoStreamStatus', isRunning: boolean } };
+
+export type StopVideoStreamMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StopVideoStreamMutation = { __typename?: 'Mutation', stopVideoStream: { __typename?: 'StopVideoStreamStatus', isStopped: boolean, status: string } };
 
 export type SoftwareDataFragment = { __typename?: 'Software', id: string, name: string };
 
@@ -1278,6 +1345,42 @@ export function useGetDevicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetDevicesQueryHookResult = ReturnType<typeof useGetDevicesQuery>;
 export type GetDevicesLazyQueryHookResult = ReturnType<typeof useGetDevicesLazyQuery>;
 export type GetDevicesQueryResult = Apollo.QueryResult<GetDevicesQuery, GetDevicesQueryVariables>;
+export const GetDeviceReservationStatusDocument = gql`
+    query getDeviceReservationStatus($deviceId: ID!) {
+  getDevice(id: $deviceId) {
+    id
+    is_reserved
+  }
+}
+    `;
+
+/**
+ * __useGetDeviceReservationStatusQuery__
+ *
+ * To run a query within a React component, call `useGetDeviceReservationStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDeviceReservationStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDeviceReservationStatusQuery({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *   },
+ * });
+ */
+export function useGetDeviceReservationStatusQuery(baseOptions: Apollo.QueryHookOptions<GetDeviceReservationStatusQuery, GetDeviceReservationStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDeviceReservationStatusQuery, GetDeviceReservationStatusQueryVariables>(GetDeviceReservationStatusDocument, options);
+      }
+export function useGetDeviceReservationStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDeviceReservationStatusQuery, GetDeviceReservationStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDeviceReservationStatusQuery, GetDeviceReservationStatusQueryVariables>(GetDeviceReservationStatusDocument, options);
+        }
+export type GetDeviceReservationStatusQueryHookResult = ReturnType<typeof useGetDeviceReservationStatusQuery>;
+export type GetDeviceReservationStatusLazyQueryHookResult = ReturnType<typeof useGetDeviceReservationStatusLazyQuery>;
+export type GetDeviceReservationStatusQueryResult = Apollo.QueryResult<GetDeviceReservationStatusQuery, GetDeviceReservationStatusQueryVariables>;
 export const GetDeviceByIdDocument = gql`
     query getDeviceByID($input: ID!) {
   getDevice(id: $input) {
@@ -1313,6 +1416,76 @@ export function useGetDeviceByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetDeviceByIdQueryHookResult = ReturnType<typeof useGetDeviceByIdQuery>;
 export type GetDeviceByIdLazyQueryHookResult = ReturnType<typeof useGetDeviceByIdLazyQuery>;
 export type GetDeviceByIdQueryResult = Apollo.QueryResult<GetDeviceByIdQuery, GetDeviceByIdQueryVariables>;
+export const GetCameraStatusDocument = gql`
+    query getCameraStatus {
+  cameraStatus {
+    isConnected
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetCameraStatusQuery__
+ *
+ * To run a query within a React component, call `useGetCameraStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCameraStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCameraStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCameraStatusQuery(baseOptions?: Apollo.QueryHookOptions<GetCameraStatusQuery, GetCameraStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCameraStatusQuery, GetCameraStatusQueryVariables>(GetCameraStatusDocument, options);
+      }
+export function useGetCameraStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCameraStatusQuery, GetCameraStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCameraStatusQuery, GetCameraStatusQueryVariables>(GetCameraStatusDocument, options);
+        }
+export type GetCameraStatusQueryHookResult = ReturnType<typeof useGetCameraStatusQuery>;
+export type GetCameraStatusLazyQueryHookResult = ReturnType<typeof useGetCameraStatusLazyQuery>;
+export type GetCameraStatusQueryResult = Apollo.QueryResult<GetCameraStatusQuery, GetCameraStatusQueryVariables>;
+export const GetVideoStreamStatusDocument = gql`
+    query getVideoStreamStatus {
+  videoStreamStatus {
+    isRunning
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetVideoStreamStatusQuery__
+ *
+ * To run a query within a React component, call `useGetVideoStreamStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVideoStreamStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVideoStreamStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetVideoStreamStatusQuery(baseOptions?: Apollo.QueryHookOptions<GetVideoStreamStatusQuery, GetVideoStreamStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetVideoStreamStatusQuery, GetVideoStreamStatusQueryVariables>(GetVideoStreamStatusDocument, options);
+      }
+export function useGetVideoStreamStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetVideoStreamStatusQuery, GetVideoStreamStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetVideoStreamStatusQuery, GetVideoStreamStatusQueryVariables>(GetVideoStreamStatusDocument, options);
+        }
+export type GetVideoStreamStatusQueryHookResult = ReturnType<typeof useGetVideoStreamStatusQuery>;
+export type GetVideoStreamStatusLazyQueryHookResult = ReturnType<typeof useGetVideoStreamStatusLazyQuery>;
+export type GetVideoStreamStatusQueryResult = Apollo.QueryResult<GetVideoStreamStatusQuery, GetVideoStreamStatusQueryVariables>;
 export const CreateDeviceDocument = gql`
     mutation createDevice($input: CreateDevice) {
   createDevice(input: $input) {
@@ -1610,3 +1783,68 @@ export function useRemoveSoftwareMutation(baseOptions?: Apollo.MutationHookOptio
 export type RemoveSoftwareMutationHookResult = ReturnType<typeof useRemoveSoftwareMutation>;
 export type RemoveSoftwareMutationResult = Apollo.MutationResult<RemoveSoftwareMutation>;
 export type RemoveSoftwareMutationOptions = Apollo.BaseMutationOptions<RemoveSoftwareMutation, RemoveSoftwareMutationVariables>;
+export const StartVideoStreamDocument = gql`
+    mutation startVideoStream {
+  startVideoStream {
+    isRunning
+  }
+}
+    `;
+export type StartVideoStreamMutationFn = Apollo.MutationFunction<StartVideoStreamMutation, StartVideoStreamMutationVariables>;
+
+/**
+ * __useStartVideoStreamMutation__
+ *
+ * To run a mutation, you first call `useStartVideoStreamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartVideoStreamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startVideoStreamMutation, { data, loading, error }] = useStartVideoStreamMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useStartVideoStreamMutation(baseOptions?: Apollo.MutationHookOptions<StartVideoStreamMutation, StartVideoStreamMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartVideoStreamMutation, StartVideoStreamMutationVariables>(StartVideoStreamDocument, options);
+      }
+export type StartVideoStreamMutationHookResult = ReturnType<typeof useStartVideoStreamMutation>;
+export type StartVideoStreamMutationResult = Apollo.MutationResult<StartVideoStreamMutation>;
+export type StartVideoStreamMutationOptions = Apollo.BaseMutationOptions<StartVideoStreamMutation, StartVideoStreamMutationVariables>;
+export const StopVideoStreamDocument = gql`
+    mutation stopVideoStream {
+  stopVideoStream {
+    isStopped
+    status
+  }
+}
+    `;
+export type StopVideoStreamMutationFn = Apollo.MutationFunction<StopVideoStreamMutation, StopVideoStreamMutationVariables>;
+
+/**
+ * __useStopVideoStreamMutation__
+ *
+ * To run a mutation, you first call `useStopVideoStreamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopVideoStreamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopVideoStreamMutation, { data, loading, error }] = useStopVideoStreamMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useStopVideoStreamMutation(baseOptions?: Apollo.MutationHookOptions<StopVideoStreamMutation, StopVideoStreamMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StopVideoStreamMutation, StopVideoStreamMutationVariables>(StopVideoStreamDocument, options);
+      }
+export type StopVideoStreamMutationHookResult = ReturnType<typeof useStopVideoStreamMutation>;
+export type StopVideoStreamMutationResult = Apollo.MutationResult<StopVideoStreamMutation>;
+export type StopVideoStreamMutationOptions = Apollo.BaseMutationOptions<StopVideoStreamMutation, StopVideoStreamMutationVariables>;
