@@ -121,6 +121,20 @@ query getDeviceByID($input: ID!) {
   }
 }
 
+query getCameraStatus {
+  cameraStatus {
+    isConnected
+    status
+  }
+}
+
+query getVideoStreamStatus {
+  videoStreamStatus {
+    isRunning
+    status
+  }
+}
+
 mutation createDevice($input: CreateDevice) {
   createDevice(input: $input) {
     ...DeviceData
@@ -172,6 +186,19 @@ mutation removeDeviceType($input: ID!) {
 mutation removeSoftware($input: ID!) {
   removeSoftware(id: $input) {
     ...SoftwareData
+  }
+}
+
+mutation startVideoStream {
+  startVideoStream {
+    isRunning
+  }
+}
+
+mutation stopVideoStream {
+  stopVideoStream {
+    isStopped
+    status
   }
 }
 

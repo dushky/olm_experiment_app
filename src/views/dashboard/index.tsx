@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 
 // MUI
-import { Grid, CircularProgress } from "@mui/material";
+import {Grid, CircularProgress, Collapse, Alert, AlertTitle} from "@mui/material";
 
 // constants
 import { gridSpacing } from "assets/constants";
@@ -13,6 +13,7 @@ import {
   useStopScriptMutation,
   useChangeScriptMutation,
   useGetDeviceReservationStatusQuery,
+  useGetCameraStatusQuery,
 } from "generated/graphql";
 import ExperimentFormWrapper from "./ExperimentFormWrapper";
 import MainCard from "ui-components/cards/MainCard";
@@ -27,12 +28,16 @@ const Dashboard = () => {
     fetchPolicy: "cache-and-network",
   });
 
+  const { data: cameraStatusData} = useGetCameraStatusQuery({
+    fetchPolicy: "no-cache"
+  });
+
   const [experimentId, setExperimentId] = useState<string | undefined>(undefined);
   const [selectedDeviceName, setSelectedDeviceName] = useState<string | undefined>(undefined);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
   const [selectedSoftwareName, setSelectedSoftwareName] = useState<string | undefined>(undefined);
 
-  const { loading, error, data, } = useGetDeviceReservationStatusQuery({
+  const { loading, error, data } = useGetDeviceReservationStatusQuery({
     variables: {
       deviceId: selectedDeviceId as string
     },
@@ -108,10 +113,21 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={6} md={6}>
-            <DashboardChart
-                selectedSoftwareName={selectedSoftwareName}
-                selectedDeviceName={selectedDeviceName}
-            />
+            <Grid container spacing={gridSpacing}>
+              <Grid item xs={12}>
+                <DashboardChart
+                    selectedSoftwareName={selectedSoftwareName}
+                    selectedDeviceName={selectedDeviceName}
+                />
+              </Grid>
+              {cameraStatusData?.cameraStatus.isConnected && (
+                  <Grid item xs={12}>
+                      <DashboardVideo/>
+                  </Grid>
+              )
+              }
+            </Grid>
+
           </Grid>
           <Grid item xs={6} md={6}>
             <MainCard>
