@@ -108,9 +108,30 @@ query getDevices {
   }
 }
 
+query getDeviceReservationStatus($deviceId: ID!) {
+  getDevice(id: $deviceId) {
+    id
+    is_reserved
+  }
+}
+
 query getDeviceByID($input: ID!) {
   getDevice(id: $input) {
     ...DeviceData
+  }
+}
+
+query getCameraStatus {
+  cameraStatus {
+    isConnected
+    status
+  }
+}
+
+query getVideoStreamStatus {
+  videoStreamStatus {
+    isRunning
+    status
   }
 }
 
@@ -165,6 +186,19 @@ mutation removeDeviceType($input: ID!) {
 mutation removeSoftware($input: ID!) {
   removeSoftware(id: $input) {
     ...SoftwareData
+  }
+}
+
+mutation startVideoStream {
+  startVideoStream {
+    isRunning
+  }
+}
+
+mutation stopVideoStream {
+  stopVideoStream {
+    isStopped
+    status
   }
 }
 
