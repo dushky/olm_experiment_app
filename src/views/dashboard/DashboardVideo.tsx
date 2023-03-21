@@ -20,8 +20,9 @@ const DashboardVideo: React.FC<Props> = ({}: Props) => {
     const [activeStream, setActiveStream] = useState(false);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const streamUrl = useRef((new URL(process.env.REACT_APP_API_ENDPOINT || "http://127.0.0.1")).origin + ":8080/hls/experiment.m3u8");
-    const { error, data: videoStreamStatusData, refetch } = useGetVideoStreamStatusQuery()
-
+    const { error, data: videoStreamStatusData, refetch } = useGetVideoStreamStatusQuery({
+        fetchPolicy: "no-cache"
+    });
 
     const [startVideoStreamMutation] = useStartVideoStreamMutation();
     const [stopVideoStreamMutation] = useStopVideoStreamMutation();
