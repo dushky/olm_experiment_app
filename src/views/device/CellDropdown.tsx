@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -11,7 +11,7 @@ interface Props {
   multiple: boolean;
   label: string;
   change: (e: any) => void;
-  selectedValue: Update | Update[];
+  selectedValue: Update | Update[] | undefined;
   selectName: string;
   id: string;
 }
@@ -36,13 +36,19 @@ const CellDropdown = ({
   id,
 }: Props) => {
   const classes = useStyles();
-  const [selected, setSelected] = useState<string | string[]>(
-    Array.isArray(selectedValue)
-      ? selectedValue.map((item) => {
-          return item.id;
-        })
-      : selectedValue.id
-  );
+    const [selected, setSelected] = useState<string | string[]>("");
+
+    useEffect(() => {
+        if (selectedValue) {
+            setSelected(
+                Array.isArray(selectedValue)
+                    ? selectedValue.map((item) => {
+                        return item.id;
+                    })
+                    : selectedValue.id
+            )
+        }
+    }, [selectedValue]);
 
   const handleChange = (event: any) => {
     const value = event.target.value;
@@ -54,6 +60,7 @@ const CellDropdown = ({
   return (
     <Grid>
       <Select
+        required={true}
         labelId="test-select-label"
         multiple={multiple}
         value={selected}

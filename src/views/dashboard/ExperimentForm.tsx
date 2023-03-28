@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useFormik } from "formik";
 
 // mui
@@ -45,17 +45,26 @@ const ExperimentForm = (props: Props) => {
     setSelectedDeviceName,
     setSelectedDeviceId
   } = props;
+
+  const [selectedCommand, setSelectedCommand] = useState(undefined);
+
+  const [initialValues, setInitialValues] = useState<{ [key: string]: any }>({});
+
+  useEffect(() => {
+    let initValues: { [key: string]: any } = {};
+    if (data && data[selectedCommand ?? 0].items.length) {
+      data[selectedCommand ?? 0].items.forEach(
+          (item: any, index: number) => {
+            initValues[item.name!] = item.placeholder!
+          }
+      );
+    }
+    setInitialValues(initValues)
+  }, [selectedCommand]);
+
   const formik = useFormik({
-    initialValues: {
-      reg_request: "",
-      input_fan: "",
-      input_lamp: "",
-      input_led: "",
-      t_sim: "",
-      s_rate: "",
-      uploaded_file: "",
-      user_function: "",
-    },
+    initialValues: initialValues,
+    enableReinitialize: true,
     onSubmit: async (values) => {
       if (selectedCommand === undefined) {
         toast("Select command to run experiment");
@@ -83,9 +92,6 @@ const ExperimentForm = (props: Props) => {
       });
     },
   });
-
-  const [selectedCommand, setSelectedCommand] = useState(undefined);
-
   const { data: deviceData } = useGetDeviceByIdQuery({
     variables: {
       input: selected.deviceID,
@@ -168,7 +174,7 @@ const ExperimentForm = (props: Props) => {
             multiple={false}
             label="Pick command"
             change={onCommandChanged}
-            selectedValue={{ id: "", name: "" }}
+            selectedValue={undefined}
             selectName="command"
             id="command"
           />
@@ -187,7 +193,7 @@ const ExperimentForm = (props: Props) => {
             label="Pick software"
             id="software"
             change={onSoftwareChanged}
-            selectedValue={{ id: "", name: "" }}
+            selectedValue={undefined}
             selectName="software"
           />
         </Grid>
@@ -230,7 +236,7 @@ const ExperimentForm = (props: Props) => {
               multiple={false}
               label="Pick device"
               change={onDeviceChanged}
-              selectedValue={{ id: "", name: "" }}
+              selectedValue={undefined}
               selectName="device"
               id="device"
             />

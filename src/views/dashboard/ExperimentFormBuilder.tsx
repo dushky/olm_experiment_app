@@ -39,7 +39,7 @@ const buildSelectField = (params: ConfigItem, formik: any, index: number) => {
         multiple={false}
         label={params.title!}
         change={formik.handleChange}
-        selectedValue={{ id: "", name: "" }}
+        selectedValue={{ id: formik.values[params.name!] ?? "", name: "" }}
         selectName={params.name!}
         id={params.name!}
       />
