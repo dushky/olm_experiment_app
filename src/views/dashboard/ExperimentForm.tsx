@@ -174,7 +174,6 @@ const ExperimentForm = (props: Props) => {
             multiple={false}
             label="Pick command"
             change={onCommandChanged}
-            selectedValue={undefined}
             selectName="command"
             id="command"
           />
@@ -193,7 +192,6 @@ const ExperimentForm = (props: Props) => {
             label="Pick software"
             id="software"
             change={onSoftwareChanged}
-            selectedValue={undefined}
             selectName="software"
           />
         </Grid>
@@ -236,7 +234,6 @@ const ExperimentForm = (props: Props) => {
               multiple={false}
               label="Pick device"
               change={onDeviceChanged}
-              selectedValue={undefined}
               selectName="device"
               id="device"
             />

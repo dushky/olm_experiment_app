@@ -11,7 +11,7 @@ interface Props {
   multiple: boolean;
   label: string;
   change: (e: any) => void;
-  selectedValue: Update | Update[] | undefined;
+  selectedValue?: Update | Update[];
   selectName: string;
   id: string;
 }
