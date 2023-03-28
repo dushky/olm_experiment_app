@@ -68,6 +68,9 @@ const MainLayout = () => {
   const [leftDrawerOpened, setLeftDrawerOpened] = useState(true);
   const handleLeftDrawerToggle = () => {
     setLeftDrawerOpened(!leftDrawerOpened);
+    setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+    }, 500)
   };
 
   return (
