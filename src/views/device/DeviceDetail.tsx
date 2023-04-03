@@ -61,16 +61,16 @@ const DeviceDetail = ({
 
   const getSelectedDeviceType = (): Update => {
     return {
-      id: device.deviceType.id,
-      name: device.deviceType.name,
+      id: formik.values.deviceType,
+      name: "",
     };
   };
 
   const getSelectedSoftware = (): Update[] => {
-    return device.software.map((item) => {
+    return formik.values.software.map((item) => {
       return {
-        id: item.id,
-        name: item.name,
+        id: item,
+        name: "",
       };
     });
   };

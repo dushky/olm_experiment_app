@@ -36,7 +36,7 @@ const CellDropdown = ({
   id,
 }: Props) => {
   const classes = useStyles();
-    const [selected, setSelected] = useState<string | string[]>("");
+    const [selected, setSelected] = useState<string | string[]>(multiple ? [] : "");
 
     useEffect(() => {
         if (selectedValue) {
