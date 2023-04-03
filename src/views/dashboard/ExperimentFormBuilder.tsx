@@ -16,6 +16,7 @@ const buildTextField = (params: ConfigItem, formik: any, index: number) => {
         value={formik.values[params.name!] ?? ""}
         onChange={formik.handleChange}
         helperText={params.title}
+        required={true}
       />
     </Grid>
   );
