@@ -28,14 +28,17 @@ const Dashboard = () => {
     fetchPolicy: "cache-and-network",
   });
 
-  const { data: cameraStatusData} = useGetCameraStatusQuery({
-    fetchPolicy: "no-cache"
-  });
-
   const [experimentId, setExperimentId] = useState<string | undefined>(undefined);
   const [selectedDeviceName, setSelectedDeviceName] = useState<string | undefined>(undefined);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(undefined);
   const [selectedSoftwareName, setSelectedSoftwareName] = useState<string | undefined>(undefined);
+
+  const { data: cameraStatusData} = useGetCameraStatusQuery({
+    variables: {
+      deviceId: selectedDeviceId as string
+    },
+    fetchPolicy: "no-cache"
+  });
 
   const { loading, error, data } = useGetDeviceReservationStatusQuery({
     variables: {
@@ -120,9 +123,11 @@ const Dashboard = () => {
                     selectedDeviceName={selectedDeviceName}
                 />
               </Grid>
-              {cameraStatusData?.cameraStatus.isConnected && (
+              {selectedDeviceId !== undefined
+                  && selectedDeviceName !== undefined
+                  && cameraStatusData?.cameraStatus.isConnected && (
                   <Grid item xs={12}>
-                      <DashboardVideo/>
+                      <DashboardVideo selectedDeviceId={selectedDeviceId} selectedDeviceName={selectedDeviceName}/>
                   </Grid>
               )
               }

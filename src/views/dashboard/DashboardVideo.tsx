@@ -11,16 +11,20 @@ import axios from "axios";
 import StopCircleFilledOutlinedIcon from "@mui/icons-material/StopCircleOutlined";
 import {LiveTv} from "@mui/icons-material";
 type Props = {
-
+    selectedDeviceId: string
+    selectedDeviceName: string
 }
 
-const DashboardVideo: React.FC<Props> = ({}: Props) => {
+const DashboardVideo: React.FC<Props> = ({selectedDeviceId, selectedDeviceName}: Props) => {
     const playerRef = useRef<ReactPlayer>(null);
     const [loading, setLoading] = useState(false);
     const [activeStream, setActiveStream] = useState(false);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    const streamUrl = useRef((new URL(process.env.REACT_APP_API_ENDPOINT || "http://127.0.0.1")).origin + ":8080/hls/experiment.m3u8");
+    const streamUrl = useRef((new URL(process.env.REACT_APP_API_ENDPOINT || "http://127.0.0.1")).origin + ":8080/hls/" + selectedDeviceName + ".m3u8");
     const { error, data: videoStreamStatusData, refetch } = useGetVideoStreamStatusQuery({
+        variables: {
+            deviceId: selectedDeviceId
+        },
         fetchPolicy: "no-cache"
     });
 
@@ -28,9 +32,15 @@ const DashboardVideo: React.FC<Props> = ({}: Props) => {
     const [stopVideoStreamMutation] = useStopVideoStreamMutation();
 
     const handleStartVideoStream = async () => {
-        await startVideoStreamMutation().then(
+        setLoading(true);
+        await startVideoStreamMutation(
+            {
+                variables: {
+                    deviceId: selectedDeviceId
+                }
+            }
+        ).then(
             (values) => {
-                setLoading(true);
                 intervalRef.current = setInterval(() => {
                     axios.head(streamUrl.current).then((res) => {
                         refetch();
@@ -47,7 +57,12 @@ const DashboardVideo: React.FC<Props> = ({}: Props) => {
 
     const handleStopVideoStream = async () => {
         setLoading(true);
-        await stopVideoStreamMutation().then(
+        await stopVideoStreamMutation(
+            {
+                variables: {
+                    deviceId: selectedDeviceId
+                }
+            }).then(
             (values) => {
                 setLoading(false);
                 if (values.data?.stopVideoStream.isStopped){

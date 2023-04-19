@@ -121,15 +121,15 @@ query getDeviceByID($input: ID!) {
   }
 }
 
-query getCameraStatus {
-  cameraStatus {
+query getCameraStatus($deviceId: ID!) {
+  cameraStatus(deviceID: $deviceId) {
     isConnected
     status
   }
 }
 
-query getVideoStreamStatus {
-  videoStreamStatus {
+query getVideoStreamStatus($deviceId: ID!) {
+  videoStreamStatus(deviceID: $deviceId) {
     isRunning
     status
   }
@@ -189,14 +189,15 @@ mutation removeSoftware($input: ID!) {
   }
 }
 
-mutation startVideoStream {
-  startVideoStream {
+mutation startVideoStream($deviceId: ID!) {
+  startVideoStream(deviceID: $deviceId) {
     isRunning
+    status
   }
 }
 
-mutation stopVideoStream {
-  stopVideoStream {
+mutation stopVideoStream($deviceId: ID!) {
+  stopVideoStream(deviceID: $deviceId) {
     isStopped
     status
   }
