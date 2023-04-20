@@ -140,7 +140,7 @@ const AddDeviceForm = ({ handleSubmit, deviceTypes, software }: Props) => {
                 id="camera_port"
                 name="camera_port"
                 label="Connected Camera port"
-                placeholder="Connected Camera port"
+                placeholder="/dev/video0"
                 margin="dense"
                 value={formik.values.camera_port}
                 onChange={formik.handleChange}

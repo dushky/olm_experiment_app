@@ -1,13 +1,11 @@
 import React, {memo, useRef, useState} from "react";
-import ReactPlayer from "react-player";
-import MainCard from "../../ui-components/cards/MainCard";
+import { toast } from "react-toastify";
 import {LoadingButton} from "@mui/lab";
 import PlayCircleFilledOutlinedIcon from "@mui/icons-material/PlayCircleFilledOutlined";
 import {
     useGetVideoStreamStatusQuery,
     useStartVideoStreamMutation, useStopVideoStreamMutation
 } from "../../generated/graphql";
-import axios from "axios";
 import StopCircleFilledOutlinedIcon from "@mui/icons-material/StopCircleOutlined";
 import {LiveTv} from "@mui/icons-material";
 type Props = {
@@ -16,12 +14,10 @@ type Props = {
 }
 
 const DashboardVideo: React.FC<Props> = ({selectedDeviceId, selectedDeviceName}: Props) => {
-    const playerRef = useRef<ReactPlayer>(null);
+
     const [loading, setLoading] = useState(false);
-    const [activeStream, setActiveStream] = useState(false);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-    const streamUrl = useRef((new URL(process.env.REACT_APP_API_ENDPOINT || "http://127.0.0.1")).origin + ":8080/hls/" + selectedDeviceName + ".m3u8");
-    const { error, data: videoStreamStatusData, refetch } = useGetVideoStreamStatusQuery({
+    const streamUrl = useRef((new URL(process.env.REACT_APP_API_ENDPOINT || "https://127.0.0.1")).origin + ":9000/stream");
+    const { error,loading: videoStreamStatusLoading, data: videoStreamStatusData, refetch: videoStreamStatusRefetch } = useGetVideoStreamStatusQuery({
         variables: {
             deviceId: selectedDeviceId
         },
@@ -41,18 +37,17 @@ const DashboardVideo: React.FC<Props> = ({selectedDeviceId, selectedDeviceName}:
             }
         ).then(
             (values) => {
-                intervalRef.current = setInterval(() => {
-                    axios.head(streamUrl.current).then((res) => {
-                        refetch();
-                        clearInterval(intervalRef.current as unknown as number)
-                        setLoading(false);
-                        setActiveStream(true);
-                    }).catch((err) => {
-                        console.log(err)
-                    });
-                }, 1000)
+                if(!values.data?.startVideoStream.isRunning) {
+                    toast.error(values.data?.startVideoStream.status);
+                }
             }
-        )
+        ).catch((error: Error) => {
+            toast.error(error.message);
+        }).finally(() => {
+            videoStreamStatusRefetch().finally(() => {
+                setLoading(false);
+            })
+        })
     }
 
     const handleStopVideoStream = async () => {
@@ -64,46 +59,27 @@ const DashboardVideo: React.FC<Props> = ({selectedDeviceId, selectedDeviceName}:
                 }
             }).then(
             (values) => {
-                setLoading(false);
-                if (values.data?.stopVideoStream.isStopped){
-                    refetch();
-                    setActiveStream(false)
+                if (!values.data?.stopVideoStream.isStopped){
+                    toast.error(values.data?.stopVideoStream.status);
                 }
             }
-        )
+            ).catch((error: Error) => {
+                toast.error(error.message);
+            }).finally(() => {
+                videoStreamStatusRefetch().finally(() => {
+                    setLoading(false);
+                })
+            })
     }
 
     return (
-        <MainCard>
+        <>
             {
-                (activeStream || videoStreamStatusData?.videoStreamStatus.isRunning) && (
+                (videoStreamStatusData?.videoStreamStatus.isRunning) && (
                     <div>
-                        <ReactPlayer
-                            url={streamUrl.current}
-                            ref={playerRef}
-                            muted={true}
-                            width="100%"
-                            playing={true}
-                            controls={true}
-                            height="auto"
-                            config={
-                                {
-                                    file: {
-                                        forceHLS: true,
-                                        forceSafariHLS: true,
-                                        hlsOptions: {
-                                            maxLoadingDelay: 4,
-                                            minAutoBitrate: 0,
-                                            lowLatencyMode: true,
-                                            enableWorker: true
-                                        }
-
-                                    }
-                                }
-                            }
-                        />
+                        <img src={streamUrl.current} width="100%" alt="experiment-stream"></img>
                         <LoadingButton
-                            loading={loading}
+                            loading={loading || videoStreamStatusLoading}
                             fullWidth={true}
                             color={"error"}
                             onClick={handleStopVideoStream}
@@ -116,11 +92,11 @@ const DashboardVideo: React.FC<Props> = ({selectedDeviceId, selectedDeviceName}:
                     </div>
                 ) || (
                     <div>
-                        <div style={{width: "100%", aspectRatio: "16 / 9", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <div style={{width: "100%", aspectRatio: "4 / 3", display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <LiveTv style={ { fontSize: 100} } />
                         </div>
                         <LoadingButton
-                            loading={loading}
+                            loading={loading || videoStreamStatusLoading}
                             fullWidth={true}
                             onClick={handleStartVideoStream}
                             loadingPosition="start"
@@ -133,7 +109,7 @@ const DashboardVideo: React.FC<Props> = ({selectedDeviceId, selectedDeviceName}:
                 )
             }
 
-        </MainCard>
+        </>
     );
 };
 

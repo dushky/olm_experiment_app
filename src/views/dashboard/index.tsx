@@ -124,12 +124,20 @@ const Dashboard = () => {
                 />
               </Grid>
               {selectedDeviceId !== undefined
-                  && selectedDeviceName !== undefined
-                  && cameraStatusData?.cameraStatus.isConnected && (
-                  <Grid item xs={12}>
-                      <DashboardVideo selectedDeviceId={selectedDeviceId} selectedDeviceName={selectedDeviceName}/>
-                  </Grid>
-              )
+                  && selectedDeviceName !== undefined && (
+                      <Grid item xs={12}>
+                        <MainCard>
+
+                          {cameraStatusData?.cameraStatus.isConnected && (
+                          <DashboardVideo selectedDeviceId={selectedDeviceId} selectedDeviceName={selectedDeviceName}/>
+                          ) ||
+                          (<Alert severity="info" color="info">
+                            For video stream, connect the camera and in the Device menu set the port to which the camera is connected.
+                          </Alert>)
+                          }
+                        </MainCard>
+                      </Grid>
+                  )
               }
             </Grid>
 
