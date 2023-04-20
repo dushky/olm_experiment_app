@@ -54,6 +54,7 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
         id: item.id,
         name: item.name,
         port: item.port,
+        camera_port: item.camera_port,
         deviceType: item.deviceType.name as any,
         software: item.software.map((soft) => soft.name) as any,
       };
@@ -78,6 +79,7 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
           name: value.name,
           device_type_id: value.device_type_id,
           port: value.port,
+          camera_port: value.camera_port,
           software: value.software,
         },
       },
@@ -90,6 +92,7 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
           id: item.id,
           name: item.name,
           port: item.port,
+          camera_port: item.camera_port,
           deviceType: item.deviceType.name as any,
           software: item.software.map((soft) => soft.name) as any,
         },
@@ -176,6 +179,15 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
       },
     },
     {
+      field: "camera_port",
+      flex: 1,
+      type: "string",
+      valueFormatter: (value) => value.value,
+      renderHeader: (params: any) => {
+        return <span>Camera Port</span>;
+      },
+    },
+    {
       field: "deviceType",
       flex: 1,
       type: "string",
@@ -212,6 +224,7 @@ const Device = ({ device, software, deviceTypes, loading }: Props) => {
             id: "",
             name: "",
             port: "",
+            camera_port: "",
             deviceType: "",
             software: softwareIds,
           },

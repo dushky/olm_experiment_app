@@ -217,6 +217,7 @@ fragment DeviceData on Device {
   id
   name
   port
+  camera_port
   deviceType {
     ...DeviceTypeData
   }

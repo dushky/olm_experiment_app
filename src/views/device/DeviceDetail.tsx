@@ -32,6 +32,7 @@ const DeviceDetail = ({
       id: device.id,
       name: device.name,
       port: device.port,
+      camera_port: device.camera_port,
       deviceType: device.deviceType.id,
       software: device.software.map((item) => item.id),
     },
@@ -113,6 +114,20 @@ const DeviceDetail = ({
               onChange={formik.handleChange}
               error={formik.touched.port && Boolean(formik.errors.port)}
               helperText={formik.touched.port && formik.errors.port}
+            />
+          </Grid>
+          <Grid item xs={6} md={6}>
+            <TextField
+                fullWidth
+                id="camera_port"
+                name="camera_port"
+                label="Connected Camera port"
+                placeholder="Connected Camera port"
+                margin="dense"
+                value={formik.values.camera_port}
+                onChange={formik.handleChange}
+                error={formik.touched.camera_port && Boolean(formik.errors.camera_port)}
+                helperText={formik.touched.camera_port && formik.errors.camera_port}
             />
           </Grid>
           <Grid item xs={6} md={6}>

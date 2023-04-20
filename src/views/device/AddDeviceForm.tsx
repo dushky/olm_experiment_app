@@ -32,6 +32,7 @@ const AddDeviceForm = ({ handleSubmit, deviceTypes, software }: Props) => {
     initialValues: {
       name: "",
       port: "",
+      camera_port: "",
       device_type_id: "",
       software: [],
     },
@@ -132,6 +133,20 @@ const AddDeviceForm = ({ handleSubmit, deviceTypes, software }: Props) => {
                 );
               })}
             </Select>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <TextField
+                fullWidth
+                id="camera_port"
+                name="camera_port"
+                label="Connected Camera port"
+                placeholder="Connected Camera port"
+                margin="dense"
+                value={formik.values.camera_port}
+                onChange={formik.handleChange}
+                error={formik.touched.camera_port && Boolean(formik.errors.camera_port)}
+                helperText={formik.touched.camera_port && formik.errors.camera_port}
+            />
           </Grid>
           <Grid item xs={6} md={6} margin="auto">
             <Button color="primary" variant="contained" fullWidth type="submit">
