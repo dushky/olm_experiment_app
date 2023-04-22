@@ -12,4 +12,6 @@
 7. run ```npm install``` to install dependencies from package.json
 8. run ```npm run generate``` to generate graphql queries mutation hooks and types
 9. run ```npm run start``` for local development or ```npm run build``` for production
-10. in production don't forget set vhost on /build folder of your built application
+10. if build failed, check if Node.Js version is 14.15
+11. if it failed on allocated memory try to increase memory with command ```NODE_OPTIONS=–max-old-space-size=5048```
+12. in production don't forget set vhost on /build folder of your built application
