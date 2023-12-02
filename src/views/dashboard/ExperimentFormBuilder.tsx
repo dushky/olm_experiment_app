@@ -3,6 +3,27 @@ import { ConfigItem } from "generated/graphql";
 import CellDropdown from "views/device/CellDropdown";
 import { Update } from "assets/constants";
 
+const buildTextAreaField = (params: ConfigItem, formik: any, index: number) => {
+  return (
+    <Grid item xs={12} md={12} key={index}>
+      <TextField
+        fullWidth
+        id={params.name!}
+        name={params.name!}
+        label={params.title}
+        placeholder={params.placeholder!}
+        margin="dense"
+        value={formik.values[params.name!] ?? ""}
+        onChange={formik.handleChange}
+        helperText={params.title}
+        required={true}
+        multiline
+        rows={16}
+      />
+    </Grid>
+  );
+};
+
 const buildTextField = (params: ConfigItem, formik: any, index: number) => {
   return (
     <Grid item xs={4} md={4} key={index}>
@@ -74,6 +95,8 @@ const buildFileField = (params: any, formik: any) => {
 
 export const buildForm = (param: ConfigItem, formik: any, index: number) => {
   switch (param.type) {
+    case "textarea":
+      return buildTextAreaField(param, formik, index);
     case "text":
       return buildTextField(param, formik, index);
     case "file":

@@ -10,11 +10,11 @@ services:
     ports: 
       - 3000:3000
     volumes:
-      - .:/app/olm_experiment_app
-      - /app/olm_experiment_app/node_modules
+      - .:/app_experimental/olm_experiment_app
+      - /app_experimental/olm_experiment_app/node_modules
     networks: 
-      - app
+      - app_experimental
 
 networks:
-  app:
+  app_experimental:
     driver: bridge
